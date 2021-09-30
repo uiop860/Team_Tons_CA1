@@ -10,11 +10,11 @@ import entities.Phone;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -30,7 +30,7 @@ public class PersonFacadeTest {
     @BeforeAll
     public static void setUpClass() throws Exception {
         emf = EMF_Creator.createEntityManagerFactoryForTest();
-        facade = PersonFacade.getFacadeExample(emf);
+        facade = PersonFacade.getPersonFacade(emf);
     }
 
     @BeforeEach

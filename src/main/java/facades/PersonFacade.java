@@ -32,7 +32,7 @@ public class PersonFacade {
      * @param _emf
      * @return an instance of this facade class.
      */
-    public static PersonFacade getFacadeExample(EntityManagerFactory _emf) {
+    public static PersonFacade getPersonFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
             instance = new PersonFacade();

@@ -36,7 +36,7 @@ public class Person implements Serializable {
 
 
     @ManyToMany(mappedBy = "persons", cascade = CascadeType.PERSIST)
-    List<Hobby> hobbies;
+    private List<Hobby> hobbies;
 
 
     public Person(String email, String firstName, String lastName)

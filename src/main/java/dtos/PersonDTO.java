@@ -26,9 +26,13 @@ public class PersonDTO {
     }
     
     public static List<PersonDTO> getDTO(List<Person> persons) {
-        List<PersonDTO> personDTO = new ArrayList<>();
-        persons.forEach(p -> personDTO.add(new PersonDTO(p)));
-        return personDTO;
+        if(persons != null){
+            List<PersonDTO> personDTO = new ArrayList<>();
+            persons.forEach(p -> personDTO.add(new PersonDTO(p)));
+            return personDTO;
+        }else{
+            return null;
+        }
     }
 
     public String getEmail() {
