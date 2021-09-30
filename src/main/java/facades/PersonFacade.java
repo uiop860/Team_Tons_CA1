@@ -5,11 +5,12 @@
  */
 package facades;
 
+import dtos.CityInfoDTO;
 import dtos.PersonDTO;
-import dtos.PersonListDTO;
 import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
+import entities.Phone;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -41,12 +42,12 @@ public class PersonFacade {
         return instance;
     }
     
-    public PersonDTO getPersonByPhone(String phone){
+    public PersonDTO getPersonByPhone(String number){
         EntityManager em = emf.createEntityManager();
         Person person;
         try {
-            TypedQuery<Person> tq = em.createQuery("SELECT p FROM Person p WHERE p.phone = :phone", Person.class);
-            tq.setParameter("phone", phone);
+            TypedQuery<Person> tq = em.createQuery("SELECT p FROM Person p JOIN FETCH p.phones ph WHERE ph.number = :number", Person.class);
+            tq.setParameter("number", number);
             person = tq.getSingleResult();
         } finally {
             em.close();
@@ -54,37 +55,38 @@ public class PersonFacade {
         return new PersonDTO(person);
     }
     
-    public List<PersonDTO> getPersonsByHobby(Hobby hobby){
+    public List<PersonDTO> getPersonsByHobby(String hobby){
         EntityManager em = emf.createEntityManager();
         List<Person> persons;
         try{
-            TypedQuery<Person> tq = em.createQuery("SELECT p FROM Person p WHERE p.hobby = :hobby", Person.class);
+            TypedQuery<Person> tq = em.createQuery("SELECT p FROM Person p JOIN FETCH p.hobbies h WHERE h.name :hobby", Person.class);
             tq.setParameter("hobby", hobby);
             persons = tq.getResultList();
         }finally{
             em.close();
         }
-        return new PersonListDTO(persons).getPersonsDTO();
+        return PersonDTO.getDTO(persons);
     } 
     
     public List<PersonDTO> getPersonsByCity(String city){
         EntityManager em = emf.createEntityManager();
         List<Person> persons;
         try{
-            TypedQuery<Person> tq = em.createQuery("SELECT p FROM Person p WHERE p.cityInfo = city", Person.class);
+            TypedQuery<Person> tq = em.createQuery("SELECT p FROM Person p JOIN FETCH p.address a JOIN FETCH a.cityInfo c WHERE c.city = :city", Person.class);
             tq.setParameter("city", city);
             persons = tq.getResultList();
         }finally{
             em.close();
         }
-        return new PersonListDTO(persons).getPersonsDTO();
+        
+        return PersonDTO.getDTO(persons);
     }
     
     public long getNumberOfPersonsByHobby(String hobby){
         EntityManager em = emf.createEntityManager();
         long count;
         try{
-            Query q = em.createQuery("SELECT COUNT(p) FROM Person p WHERE p.hobby = :hobby");
+            Query q = em.createQuery("SELECT COUNT(p) FROM Person p JOIN FETCH p.hobbies h WHERE h.name = :hobby");
             q.setParameter("hobby", hobby);
             count = (long) q.getSingleResult();
         }finally{
@@ -93,23 +95,54 @@ public class PersonFacade {
         return count;
     }
     
-    public List<CityInfo> getAllZipCodes(){
+    public List<CityInfoDTO> getAllZipCodes(){
         EntityManager em = emf.createEntityManager();
-        List<CityInfo> cityInfo;
+        List<CityInfo> cityInfos;
         try{
-            TypedQuery<CityInfo> tq = em.createQuery("", CityInfo.class);
-            
+            TypedQuery<CityInfo> tq = em.createQuery("SELECT c FROM CityInfo c", CityInfo.class);
+            cityInfos = tq.getResultList();
         }finally{
-            
+            em.close();
         }
-        return null;
+        return CityInfoDTO.getDTO(cityInfos);
     }
     
-    public Person insertPerson(){
-        return null;
+    public PersonDTO getPersonByID(int id){
+        EntityManager em = emf.createEntityManager();
+        PersonDTO person;
+        try{
+            em.getTransaction().begin();
+            person = new PersonDTO(em.find(Person.class, id));
+            em.getTransaction().commit();
+        }finally{
+            em.close();
+        }
+        return person;
     }
     
-    public Person updatePerson(){
-        return null;
+    public PersonDTO insertPerson(Person person){
+        EntityManager em = emf.createEntityManager();
+        try{
+            em.getTransaction().begin();
+            em.persist(person);
+            em.getTransaction().commit();
+        }finally{
+            em.close();
+        }
+        return new PersonDTO(person);
+    }
+    
+    public PersonDTO updatePerson(Person person, int id){
+        EntityManager em = emf.createEntityManager();
+        Person updatePerson;
+        try{
+            em.getTransaction().begin();
+            updatePerson = em.find(Person.class, id);
+            updatePerson.updatePerson(person);
+            em.getTransaction().commit();
+        }finally{
+            em.close();
+        }
+        return new PersonDTO(updatePerson);
     }
 }

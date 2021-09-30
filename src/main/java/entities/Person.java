@@ -15,6 +15,7 @@ import javax.persistence.*;
  * @author Magnus
  */
 @Entity
+@NamedQuery(name = "Person.deleteAllRows", query = "DELETE from Person")
 public class Person implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,6 +48,13 @@ public class Person implements Serializable {
 
     public Person()
     {
+    }
+    
+    public Person updatePerson(Person person){
+        this.email = person.getEmail();
+        this.firstName = person.getFirstName();
+        this.lastName = person.getLastName();
+        return person;
     }
 
     public List<Phone> getPhones()
