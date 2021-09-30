@@ -5,7 +5,7 @@
  */
 package entities;
 
-import org.graalvm.compiler.core.common.type.ArithmeticOpTable;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class CityInfo implements Serializable {
     private int zipCode;
     private String city;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "cityInfo", cascade = CascadeType.PERSIST)
     private List<Address> addresses;
 
     public CityInfo(int zipCode, String city)
