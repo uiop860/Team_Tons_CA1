@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import entities.Person;
 import utils.EMF_Creator;
 import facades.FacadeExample;
 import javax.persistence.EntityManagerFactory;
@@ -40,5 +41,6 @@ public class RenameMeResource {
     public String testApi(){
         String test = "{\"msg\":\"test\"}";
         return test;
-    }
+    }    
+    
 }

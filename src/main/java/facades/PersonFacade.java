@@ -20,7 +20,7 @@ import javax.persistence.TypedQuery;
  */
 public class PersonFacade {
     
-    private static FacadeExample instance;
+    private static PersonFacade instance;
     private static EntityManagerFactory emf;
     
     private PersonFacade() {
