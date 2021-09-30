@@ -5,10 +5,25 @@
  */
 package dtos;
 
+import entities.CityInfo;
+
 /**
  *
  * @author olive
  */
 public class CityInfoDTO {
     
+    private int zipCode;
+    
+    public CityInfoDTO(CityInfo cityInfo){
+        this.zipCode = cityInfo.getZipCode;
+    }
+
+    public int getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(int zipCode) {
+        this.zipCode = zipCode;
+    }
 }
