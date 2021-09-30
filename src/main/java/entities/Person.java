@@ -6,22 +6,125 @@
 package entities;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
 
 /**
  *
- * @author Magnu
+ * @author Magnus
  */
 @Entity
 public class Person implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String email;
+    private String firstName;
+    private String lastName;
+
+    @OneToMany(mappedBy = "person", cascade = CascadeType.PERSIST)
+    private List<Phone> phones;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Address address;
+
+
+    @ManyToMany(mappedBy = "persons", cascade = CascadeType.PERSIST)
+    List<Hobby> hobbies;
+
+
+    public Person(String email, String firstName, String lastName)
+    {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phones = new ArrayList<>();
+        this.hobbies = new ArrayList<>();
+    }
+
+    public Person()
+    {
+    }
+
+    public List<Phone> getPhones()
+    {
+        return phones;
+    }
+
+    public List<Hobby> getHobbies()
+    {
+        return hobbies;
+    }
+
+    public void addHobby(Hobby hobby)
+    {
+        if(hobby != null) {
+            this.hobbies.add(hobby);
+            hobby.getPersons().add(this);
+        }
+    }
+
+    public void removeHobby(Hobby hobby) {
+        if(hobby != null) {
+            this.hobbies.remove(hobby);
+            hobby.getPersons().remove(this);
+        }
+    }
+    public Address getAddress()
+    {
+        return address;
+    }
+
+    public void setAddress(Address address)
+    {
+        this.address = address;
+    }
+
+    public String getEmail()
+    {
+        return email;
+    }
+
+    public void setEmail(String email)
+    {
+        this.email = email;
+    }
+
+    public String getFirstName()
+    {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName)
+    {
+        this.firstName = firstName;
+    }
+
+    public String getLastName()
+    {
+        return lastName;
+    }
+
+    public void setLastName(String lastName)
+    {
+        this.lastName = lastName;
+    }
+
+    public List<Phone> getPhone()
+    {
+        return phones;
+    }
+
+    public void addPhone(Phone phone)
+    {
+        this.phones.add(phone);
+        if(phone != null) {
+            phone.setPerson(this);
+        }
+    }
 
     public Integer getId() {
         return id;
