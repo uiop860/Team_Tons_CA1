@@ -59,7 +59,7 @@ public class PersonFacade {
         EntityManager em = emf.createEntityManager();
         List<Person> persons;
         try{
-            TypedQuery<Person> tq = em.createQuery("SELECT p FROM Person p JOIN FETCH p.hobbies h WHERE h.name :hobby", Person.class);
+            TypedQuery<Person> tq = em.createQuery("SELECT p FROM Person p JOIN FETCH p.hobbies h WHERE h.name = :hobby", Person.class);
             tq.setParameter("hobby", hobby);
             persons = tq.getResultList();
         }finally{

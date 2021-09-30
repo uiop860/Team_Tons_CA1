@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package facades;
 
 import dtos.CityInfoDTO;
@@ -12,14 +7,10 @@ import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
-import entities.RenameMe;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,8 +25,7 @@ public class PersonFacadeTest {
     private static EntityManagerFactory emf;
     private static PersonFacade facade;
     
-    public PersonFacadeTest() {
-    }
+    public PersonFacadeTest() {}
 
     @BeforeAll
     public static void setUpClass() throws Exception {
@@ -43,14 +33,22 @@ public class PersonFacadeTest {
         facade = PersonFacade.getFacadeExample(emf);
     }
 
-    @AfterAll
-    public static void tearDownClass() throws Exception {
-    }
-
     @BeforeEach
     public void setUp() throws Exception {
         EntityManager em = emf.createEntityManager();
         try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Phone.resetAutoIncrement").executeUpdate();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Person.resetAutoIncrement").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.resetAutoIncrement").executeUpdate();
+            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Hobby.resetAutoIncrement").executeUpdate();
+            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
+            em.createNamedQuery("CityInfo.resetAutoIncrement").executeUpdate();
+            em.getTransaction().commit();
             
             Person person = new Person("test@test.com", "Anders", "Larsen");
             person.addHobby(new Hobby("Bage", "Alle bollerne"));
@@ -71,22 +69,11 @@ public class PersonFacadeTest {
             em.getTransaction().begin();
             em.persist(person);
             em.getTransaction().commit();
+            
             em.getTransaction().begin();
             em.persist(person1);
             em.getTransaction().commit();
         } finally {
-            em.close();
-        }
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        EntityManager em = emf.createEntityManager();
-        try{
-            em.getTransaction().begin();
-//            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-            em.getTransaction().commit();
-        }finally{
             em.close();
         }
     }
@@ -113,7 +100,6 @@ public class PersonFacadeTest {
     public void testGetNumberOfPersonsByHobby() {
         long numberOfPersons = facade.getNumberOfPersonsByHobby("Bage");
         assertEquals(2, numberOfPersons);
-
     }
 
     @Test
@@ -125,22 +111,20 @@ public class PersonFacadeTest {
     @Test
     public void testGetPersonByID(){
         PersonDTO person = facade.getPersonByID(1);
-        assertEquals("Anders", person.getFirstName());
-        
+        assertEquals("Anders", person.getFirstName()); 
     }
 
     @Test
     public void testInsertPerson() {
         PersonDTO person = facade.insertPerson(new Person("tis@mand.dk","Henrik","Hansen"));
         PersonDTO personFromDB = facade.getPersonByID(3);
-        assertEquals("Henrik", personFromDB.getFirstName());
+        assertEquals(person.getFirstName(), personFromDB.getFirstName());
     }
 
     @Test
     public void testUpdatePerson() {
         PersonDTO person = facade.updatePerson(new Person("henning@svendsen","Henning","Svendsen"), 1);
         PersonDTO personFromDB = facade.getPersonByID(1);
-        assertEquals("Henning", personFromDB.getFirstName());
+        assertEquals(person.getFirstName(), personFromDB.getFirstName());
     }
-    
 }

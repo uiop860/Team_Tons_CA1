@@ -15,6 +15,8 @@ import javax.persistence.*;
  * @author Magnus
  */
 @Entity
+@NamedQuery(name = "Hobby.deleteAllRows", query = "DELETE from Hobby")
+@NamedNativeQuery(name = "Hobby.resetAutoIncrement", query = "ALTER TABLE Hobby AUTO_INCREMENT = 1;")
 public class Hobby implements Serializable {
 
     private static final long serialVersionUID = 1L;
