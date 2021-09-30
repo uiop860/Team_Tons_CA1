@@ -24,6 +24,10 @@ public class PersonFacade {
     
     private static PersonFacade instance;
     private static EntityManagerFactory emf;
+
+    public static PersonFacade getPersonFacade(EntityManagerFactory EMF) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     private PersonFacade() {
     }
@@ -41,7 +45,7 @@ public class PersonFacade {
         return instance;
     }
     
-    public PersonDTO getPersonByPhone(String phone){
+    public PersonDTO getPersonByPhone(int phone){
         EntityManager em = emf.createEntityManager();
         Person person;
         try {
@@ -112,4 +116,7 @@ public class PersonFacade {
     public Person updatePerson(){
         return null;
     }
+
+    
+    
 }
