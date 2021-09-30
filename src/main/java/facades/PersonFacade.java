@@ -8,9 +8,7 @@ package facades;
 import dtos.CityInfoDTO;
 import dtos.PersonDTO;
 import entities.CityInfo;
-import entities.Hobby;
 import entities.Person;
-import entities.Phone;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -25,7 +23,7 @@ public class PersonFacade {
     
     private static PersonFacade instance;
     private static EntityManagerFactory emf;
-    
+
     private PersonFacade() {
     }
 

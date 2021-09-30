@@ -5,6 +5,7 @@
  */
 package entities;
 
+import dtos.PersonDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -133,6 +134,10 @@ public class Person implements Serializable {
         if(phone != null) {
             phone.setPerson(this);
         }
+    }
+
+    public Person(PersonDTO personByPhone) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public Integer getId() {
