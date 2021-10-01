@@ -71,12 +71,12 @@ public class PersonResource {
     @Produces({MediaType.APPLICATION_JSON})
     public String getPersonsByCity(@PathParam("city)") String city) {
        
-        List <PersonDTO> personsCity = (FACADE.getPersonsByCity(city));
-                
+        List<PersonDTO> personsCity = FACADE.getPersonsByCity(city);
+
         if (personsCity != null){
-        return GSON.toJson(personsCity);      
+            return GSON.toJson(personsCity);
         }else{
-        return null;
+            return "{\"msg\":\"You need to specify a city.\"}";
         }
     }
     
