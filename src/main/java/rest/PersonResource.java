@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import dtos.PersonDTO;
 import utils.EMF_Creator;
 import facades.PersonFacade;
+import static java.lang.System.console;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.GET;
@@ -28,6 +29,7 @@ public class PersonResource {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
             
     @GET
+    @Path("demo")
     @Produces({MediaType.APPLICATION_JSON})
     public String demo() {
         return "{\"msg\":\"Hello World\"}";
@@ -44,10 +46,10 @@ public class PersonResource {
         if (person != null){        
             return GSON.toJson(person);
         }else{
-            return null;
+            return "{\"msg\":\"No one with this phone number could be found.\"}";
         }
     }
-    
+
     //This should return a list of users with a given hobby
     @GET
     @Path("hobby/{hobby}")
@@ -59,7 +61,7 @@ public class PersonResource {
         if (personsHobby != null){
             return GSON.toJson(personsHobby);
         }else{
-            return "{\"msg\":\"Thats the wrong number\"}";
+            return "{\"msg\":\"You need to specify a hobby.\"}";
         }
     }
     
@@ -69,10 +71,15 @@ public class PersonResource {
     @Produces({MediaType.APPLICATION_JSON})
     public String getPersonsByCity(@PathParam("city)") String city) {
        
-        List<PersonDTO> personsCity = (FACADE.getPersonsByCity(city));
+        List <PersonDTO> personsCity = (FACADE.getPersonsByCity(city));
         
-        if (personsCity != null){        
-        return GSON.toJson(personsCity);
+        System.out.println(personsCity);
+        
+        if (personsCity != null){
+        String json = new Gson().toJson(personsCity);
+            System.out.println(json);
+        
+        return json;
         }else{
         return null;
         }
@@ -88,7 +95,7 @@ public class PersonResource {
         if(numberOfPersonsByHobby != 0){
             return GSON.toJson(numberOfPersonsByHobby);
         }else{
-            return null;
+            return "{\"msg\":\"No one has this hobby.\"}";
         }
     }
 }
