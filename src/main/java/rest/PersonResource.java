@@ -72,14 +72,9 @@ public class PersonResource {
     public String getPersonsByCity(@PathParam("city)") String city) {
        
         List <PersonDTO> personsCity = (FACADE.getPersonsByCity(city));
-        
-        System.out.println(personsCity);
-        
+                
         if (personsCity != null){
-        String json = new Gson().toJson(personsCity);
-            System.out.println(json);
-        
-        return json;
+        return GSON.toJson(personsCity);      
         }else{
         return null;
         }
