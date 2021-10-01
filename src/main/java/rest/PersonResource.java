@@ -54,7 +54,7 @@ public class PersonResource {
     @GET
     @Path("hobby/{hobby}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String userByHobby(@PathParam("hobby)") String hobby) {
+    public String userByHobby(@PathParam("hobby") String hobby) {
        
         List<PersonDTO> personsHobby = FACADE.getPersonsByHobby(hobby);
 
