@@ -3,12 +3,17 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.PersonDTO;
+import entities.Person;
 import utils.EMF_Creator;
 import facades.PersonFacade;
 import static java.lang.System.console;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -93,4 +98,33 @@ public class PersonResource {
             return "{\"msg\":\"No one has this hobby.\"}";
         }
     }
+    
+    @POST
+    @Path("create")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public PersonDTO createPerson(Person person){
+   
+        return FACADE.insertPerson(person);
+    }
+    
+    @PUT
+    @Path("update/{personId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public PersonDTO updateSinglePerson(@PathParam("personId") int personId, Person person){
+        
+        person.setId(personId);
+        return FACADE.updatePerson(person,personId);
+    }
+    
+    @DELETE
+    @Path("delete/{personId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public void deleteSinglePerson(@PathParam("personId") int personId, Person person){
+        
+        FACADE.deletePerson(personId);
+    }
+    
 }
