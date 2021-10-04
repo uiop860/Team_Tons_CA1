@@ -124,7 +124,7 @@ public class PersonResource {
     @Produces(MediaType.APPLICATION_JSON)
     public void deleteSinglePerson(@PathParam("personId") int personId, Person person){
         
-        FACADE.deletePerson(personId);
+      //  FACADE.deletePerson(personId);
     }
     
 }
