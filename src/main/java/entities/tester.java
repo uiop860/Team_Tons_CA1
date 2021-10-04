@@ -25,6 +25,7 @@ public class tester
         p1.addPhone(phone);
         em.getTransaction().begin();
         em.persist(p1);
+
         em.getTransaction().commit();
 
     }
