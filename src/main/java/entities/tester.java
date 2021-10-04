@@ -4,11 +4,9 @@ import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 public class tester
 {
-
 
     public static void main(String[] args)
     {

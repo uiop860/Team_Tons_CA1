@@ -5,6 +5,7 @@
  */
 package entities;
 
+import dtos.PersonDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,8 @@ import javax.persistence.*;
  * @author Magnus
  */
 @Entity
+@NamedQuery(name = "Person.deleteAllRows", query = "DELETE from Person")
+@NamedNativeQuery(name = "Person.resetAutoIncrement", query = "ALTER TABLE Person AUTO_INCREMENT = 1;")
 public class Person implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -33,7 +36,7 @@ public class Person implements Serializable {
 
 
     @ManyToMany(mappedBy = "persons", cascade = CascadeType.PERSIST)
-    List<Hobby> hobbies;
+    private List<Hobby> hobbies;
 
 
     public Person(String email, String firstName, String lastName)
@@ -47,6 +50,13 @@ public class Person implements Serializable {
 
     public Person()
     {
+    }
+    
+    public Person updatePerson(Person person){
+        this.email = person.getEmail();
+        this.firstName = person.getFirstName();
+        this.lastName = person.getLastName();
+        return person;
     }
 
     public List<Phone> getPhones()
@@ -124,6 +134,10 @@ public class Person implements Serializable {
         if(phone != null) {
             phone.setPerson(this);
         }
+    }
+
+    public Person(PersonDTO personByPhone) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public Integer getId() {

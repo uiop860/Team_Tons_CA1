@@ -17,6 +17,8 @@ import javax.persistence.*;
  * @author Magnus
  */
 @Entity
+@NamedQuery(name = "CityInfo.deleteAllRows", query = "DELETE from CityInfo")
+@NamedNativeQuery(name = "CityInfo.resetAutoIncrement", query = "ALTER TABLE CityInfo AUTO_INCREMENT = 1;")
 public class CityInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;

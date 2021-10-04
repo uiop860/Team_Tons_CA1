@@ -15,6 +15,8 @@ import javax.persistence.*;
  * @author Magnus
  */
 @Entity
+@NamedQuery(name = "Address.deleteAllRows", query = "DELETE from Address")
+@NamedNativeQuery(name = "Address.resetAutoIncrement", query = "ALTER TABLE Address AUTO_INCREMENT = 1;")
 public class Address implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -93,8 +95,6 @@ public class Address implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-
-    
 
     @Override
     public String toString() {
