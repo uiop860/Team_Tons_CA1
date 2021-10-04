@@ -15,13 +15,13 @@ import java.util.List;
  * @author olive
  */
 public class CityInfoDTO {
-    
+
     private int zipCode;
-    
-    public CityInfoDTO(CityInfo cityInfo){
+
+    public CityInfoDTO(CityInfo cityInfo) {
         this.zipCode = cityInfo.getZipCode();
     }
-    
+
     public static List<CityInfoDTO> getDTO(List<CityInfo> cityInfos) {
         List<CityInfoDTO> cityInfoDTOs = new ArrayList<>();
         cityInfos.forEach(p -> cityInfoDTOs.add(new CityInfoDTO(p)));

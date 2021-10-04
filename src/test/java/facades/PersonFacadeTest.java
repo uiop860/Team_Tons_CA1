@@ -21,11 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author olive
  */
 public class PersonFacadeTest {
-    
+
     private static EntityManagerFactory emf;
     private static PersonFacade facade;
-    
-    public PersonFacadeTest() {}
+
+    public PersonFacadeTest() {
+    }
 
     @BeforeAll
     public static void setUpClass() throws Exception {
@@ -49,15 +50,15 @@ public class PersonFacadeTest {
             em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
             em.createNamedQuery("CityInfo.resetAutoIncrement").executeUpdate();
             em.getTransaction().commit();
-            
+
             Person person = new Person("test@test.com", "Anders", "Larsen");
             person.addHobby(new Hobby("Bage", "Alle bollerne"));
-            person.addPhone(new Phone("23756493","Home phone"));
-            Address address = new Address("Flemmingvej 34 1. tv","Bank på tre gange");
+            person.addPhone(new Phone("23756493", "Home phone"));
+            Address address = new Address("Flemmingvej 34 1. tv", "Bank på tre gange");
             address.addPerson(person);
-            CityInfo cityInfo = new CityInfo(1200,"København");
+            CityInfo cityInfo = new CityInfo(1200, "København");
             cityInfo.addAddress(address);
-            
+
             Person person1 = new Person("kage@fisk.com", "Lars", "Andersen");
             person1.addHobby(new Hobby("Bage", "Alle bollerne"));
             person1.addPhone(new Phone("75643927", "Ude phone"));
@@ -65,11 +66,11 @@ public class PersonFacadeTest {
             address1.addPerson(person1);
             CityInfo cityInfo1 = new CityInfo(2970, "Hørsholm");
             cityInfo1.addAddress(address1);
-            
+
             em.getTransaction().begin();
             em.persist(person);
             em.getTransaction().commit();
-            
+
             em.getTransaction().begin();
             em.persist(person1);
             em.getTransaction().commit();
@@ -87,7 +88,7 @@ public class PersonFacadeTest {
     @Test
     public void testGetPersonsByHobby() {
         List<PersonDTO> persons = facade.getPersonsByHobby("Bage");
-        assertEquals(2, persons.size());        
+        assertEquals(2, persons.size());
     }
 
     @Test
@@ -107,23 +108,23 @@ public class PersonFacadeTest {
         List<CityInfoDTO> cityInfos = facade.getAllZipCodes();
         assertEquals(2, cityInfos.size());
     }
-    
+
     @Test
-    public void testGetPersonByID(){
+    public void testGetPersonByID() {
         PersonDTO person = facade.getPersonByID(1);
-        assertEquals("Anders", person.getFirstName()); 
+        assertEquals("Anders", person.getFirstName());
     }
 
     @Test
     public void testInsertPerson() {
-        PersonDTO person = facade.insertPerson(new Person("tis@mand.dk","Henrik","Hansen"));
+        PersonDTO person = facade.insertPerson(new Person("tis@mand.dk", "Henrik", "Hansen"));
         PersonDTO personFromDB = facade.getPersonByID(3);
         assertEquals(person.getFirstName(), personFromDB.getFirstName());
     }
 
     @Test
     public void testUpdatePerson() {
-        PersonDTO person = facade.updatePerson(new Person("henning@svendsen","Henning","Svendsen"), 1);
+        PersonDTO person = facade.updatePerson(new Person("henning@svendsen", "Henning", "Svendsen"), 1);
         PersonDTO personFromDB = facade.getPersonByID(1);
         assertEquals(person.getFirstName(), personFromDB.getFirstName());
     }

@@ -29,44 +29,41 @@ public class Hobby implements Serializable {
     @ManyToMany()
     private List<Person> persons;
 
-    public Hobby(String name, String description)
-    {
+    public Hobby(String name, String description) {
         this.name = name;
         this.description = description;
-        this.persons = new ArrayList<>();
     }
 
-    public Hobby()
-    {
+    public Hobby() {
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public List<Person> getPersons()
-    {
+    public List<Person> getPersons() {
+        if (persons == null) {
+            this.persons = new ArrayList<>();
+        }
         return persons;
     }
 
-    public void setPersons(List<Person> persons)
-    {
+    public void setPersons(List<Person> persons) {
+        if (persons == null) {
+            this.persons = new ArrayList<>();
+        }
         this.persons = persons;
     }
 
@@ -78,11 +75,9 @@ public class Hobby implements Serializable {
         this.id = id;
     }
 
-  
-
     @Override
     public String toString() {
         return "entities.Hobby[ id=" + id + " ]";
     }
-    
+
 }

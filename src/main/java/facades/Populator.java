@@ -19,10 +19,11 @@ import utils.EMF_Creator;
  * @author tha
  */
 public class Populator {
-    public static void populate(){
+
+    public static void populate() {
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
         EntityManager em = emf.createEntityManager();
-        
+
         Person person = new Person("test@test.com", "Anders", "Larsen");
         Address address = new Address("Flemmingvej 34 1. tv", "Bank på tre gange");
         CityInfo cityInfo = new CityInfo(1200, "København");
@@ -47,7 +48,7 @@ public class Populator {
         em.persist(person1);
         em.getTransaction().commit();
     }
-    
+
     public static void main(String[] args) {
         populate();
     }
