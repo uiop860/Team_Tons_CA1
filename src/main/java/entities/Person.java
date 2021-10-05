@@ -128,9 +128,20 @@ public class Person implements Serializable {
         this.id = id;
     }
 
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
+    }
+
+    public void setHobbies(List<Hobby> hobbies) {
+        this.hobbies = hobbies;
+    }
+
+    
+    
     @Override
     public String toString() {
         return "entities.Person[ id=" + id + " ]";
     }
+
 
 }
