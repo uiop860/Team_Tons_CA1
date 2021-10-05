@@ -27,43 +27,35 @@ public class Phone implements Serializable {
     @ManyToOne
     private Person person;
 
-    public Phone(String number, String description)
-    {
+    public Phone(String number, String description) {
         this.number = number;
         Description = description;
     }
 
-    public Phone()
-    {
+    public Phone() {
     }
 
-    public Person getPerson()
-    {
+    public Person getPerson() {
         return person;
     }
 
-    public void setPerson(Person person)
-    {
+    public void setPerson(Person person) {
         this.person = person;
     }
 
-    public String getNumber()
-    {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(String number)
-    {
+    public void setNumber(String number) {
         this.number = number;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return Description;
     }
 
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         Description = description;
     }
 
@@ -75,11 +67,9 @@ public class Phone implements Serializable {
         this.id = id;
     }
 
-    
-
     @Override
     public String toString() {
         return "entities.Phone[ id=" + id + " ]";
     }
-    
+
 }

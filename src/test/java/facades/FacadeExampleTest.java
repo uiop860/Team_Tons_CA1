@@ -23,8 +23,8 @@ public class FacadeExampleTest {
 
     @BeforeAll
     public static void setUpClass() {
-       emf = EMF_Creator.createEntityManagerFactoryForTest();
-       facade = FacadeExample.getFacadeExample(emf);
+        emf = EMF_Creator.createEntityManagerFactoryForTest();
+        facade = FacadeExample.getFacadeExample(emf);
     }
 
     @AfterAll
@@ -53,7 +53,5 @@ public class FacadeExampleTest {
     public void tearDown() {
 //        Remove any data after each test was run
     }
-    
-    
-    
+
 }
