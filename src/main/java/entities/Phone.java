@@ -22,14 +22,14 @@ public class Phone implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String number;
-    private String Description;
+    private String description;
 
     @ManyToOne
     private Person person;
 
     public Phone(String number, String description) {
         this.number = number;
-        Description = description;
+        this.description = description;
     }
 
     public Phone() {
@@ -52,11 +52,11 @@ public class Phone implements Serializable {
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     public Integer getId() {

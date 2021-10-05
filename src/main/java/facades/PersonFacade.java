@@ -36,6 +36,7 @@ public class PersonFacade {
         if (instance == null) {
             emf = _emf;
             instance = new PersonFacade();
+//            Populator.populate();
         }
         return instance;
     }

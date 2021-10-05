@@ -6,7 +6,6 @@
 package dtos;
 
 import entities.CityInfo;
-import entities.Person;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +16,11 @@ import java.util.List;
 public class CityInfoDTO {
 
     private int zipCode;
+    private String city;
 
     public CityInfoDTO(CityInfo cityInfo) {
         this.zipCode = cityInfo.getZipCode();
+        this.city = cityInfo.getCity();
     }
 
     public static List<CityInfoDTO> getDTO(List<CityInfo> cityInfos) {
