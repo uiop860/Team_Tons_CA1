@@ -17,6 +17,8 @@ public class PhoneDTO {
     
     private String number;
     private String description;
+
+    public PhoneDTO() {}
     
     public PhoneDTO(Phone phone){
         this.number = phone.getNumber();
@@ -28,5 +30,20 @@ public class PhoneDTO {
         phones.forEach(x -> phonesDTO.add(new PhoneDTO(x)));
         return phonesDTO;
     }
-    
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

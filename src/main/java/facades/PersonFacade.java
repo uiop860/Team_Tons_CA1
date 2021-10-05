@@ -8,7 +8,9 @@ package facades;
 import dtos.CityInfoDTO;
 import dtos.PersonDTO;
 import entities.CityInfo;
+import entities.Hobby;
 import entities.Person;
+import entities.Phone;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -131,23 +133,65 @@ public class PersonFacade {
         return new PersonDTO(person);
     }
 
-    //TODO: fix update
     public PersonDTO updatePerson(PersonDTO personDTO, int id) {
         EntityManager em = emf.createEntityManager();
-        Person updatePerson;
+        Person personToUpdate;
         try {
+            em.getTransaction().begin();
             
-            Person oldPerson = em.find(Person.class, id);
+            personToUpdate = em.find(Person.class, id);
             
-            oldPerson.setFirstName(personDTO.getFirstName());
+            if(personDTO.getFirstName() != null){
+                personToUpdate.setFirstName(personDTO.getFirstName());
+            }
             
+            if(personDTO.getLastName() != null){
+                personToUpdate.setLastName(personDTO.getLastName());
+            }
             
+            if(personDTO.getAddress() != null){
+                if(personDTO.getAddress().getAdditionalInfo() != null){
+                    personToUpdate.getAddress().setAdditionalInfo(personDTO.getAddress().getAdditionalInfo());
+                }
+                if(personDTO.getAddress().getCityInfo() != null){
+                    personToUpdate.getAddress().setStreet(personDTO.getAddress().getStreet());
+                }
+                if(personDTO.getAddress().getCityInfo() != null){
+                    if(personDTO.getAddress().getCityInfo().getCity() != null){
+                        personToUpdate.getAddress().getCityInfo().setCity(personDTO.getAddress().getCityInfo().getCity());
+                    }
+                    if(personDTO.getAddress().getCityInfo().getZipCode() != 0){
+                        personToUpdate.getAddress().getCityInfo().setZipCode(personDTO.getAddress().getCityInfo().getZipCode());
+                    }
+                }
+            }
             
-           
+            if(personDTO.getHobbies() != null){
+                personToUpdate.getHobbies().forEach((t) -> {
+                    em.remove(t);
+                });
+                personToUpdate.removeHobbies(personToUpdate.getHobbies());
+                personDTO.getHobbies().forEach((t) -> {
+                    personToUpdate.addHobby(new Hobby(t.getName(),t.getDescription()));
+                });
+            }
+            
+            if(personDTO.getPhones() != null ){
+                personToUpdate.getPhones().forEach((t) ->{
+                    em.remove(t);
+                });
+                personToUpdate.removePhones(personToUpdate.getPhones());
+                personDTO.getPhones().forEach((t) ->{
+                    personToUpdate.addPhone(new Phone(t.getNumber(),t.getDescription()));
+                });
+            }
+            
+            em.merge(personToUpdate);
+            em.getTransaction().commit();
         } finally {
             em.close();
         }
-        return null;
+        return new PersonDTO(personToUpdate);
     }
 
     public PersonDTO deletePerson(int id) {
