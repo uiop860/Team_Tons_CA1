@@ -21,26 +21,25 @@ public class PersonDTO {
     private String email;
     private String firstName;
     private String lastName;
-    private Address address;
-    private List<Hobby> hobby;
+    private AddressDTO address;
+    private List<HobbyDTO> hobbies;
+    private List<PhoneDTO> phones;
 
     public PersonDTO(Person person) {
         this.email = person.getEmail();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
         if (person.getAddress() != null) {
-            this.address = new Address(person.getAddress().getStreet(), person.getAddress().getAdditionalInfo());
+            this.address = new AddressDTO(person.getAddress());
             if (person.getAddress().getCityInfo() != null) {
-                this.address.setCityInfo(new CityInfo(person.getAddress().getCityInfo().getZipCode(), person.getAddress().getStreet()));
+                this.address.setCityInfo(new CityInfoDTO(person.getAddress().getCityInfo()));
             }
         }
-        if (person.getHobbies() != null || person.getHobbies().isEmpty()) {
-            hobby = new ArrayList<>();
-            person.getHobbies().forEach(x -> this.hobby.add(new Hobby(x.getName(), x.getDescription())));
-//            for(Hobby h: person.getHobbies()){
-//                hobby = new ArrayList<>();
-//                this.hobby.add(new Hobby(h.getName(), h.getDescription()));
-//            }
+        if (person.getHobbies() != null || !person.getHobbies().isEmpty()) {
+            this.hobbies = HobbyDTO.getDTO(person.getHobbies());
+        }
+        if(person.getPhones() != null || !person.getPhones().isEmpty()){
+            this.phones = PhoneDTO.getDTO(person.getPhones());        
         }
     }
 

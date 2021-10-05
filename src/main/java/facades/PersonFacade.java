@@ -36,6 +36,7 @@ public class PersonFacade {
         if (instance == null) {
             emf = _emf;
             instance = new PersonFacade();
+//            Populator.populate();
         }
         return instance;
     }
@@ -130,18 +131,23 @@ public class PersonFacade {
         return new PersonDTO(person);
     }
 
-    public PersonDTO updatePerson(Person person, int id) {
+    //TODO: fix update
+    public PersonDTO updatePerson(PersonDTO personDTO, int id) {
         EntityManager em = emf.createEntityManager();
         Person updatePerson;
         try {
-            em.getTransaction().begin();
-            updatePerson = em.find(Person.class, id);
-            updatePerson.updatePerson(person);
-            em.getTransaction().commit();
+            
+            Person oldPerson = em.find(Person.class, id);
+            
+            oldPerson.setFirstName(personDTO.getFirstName());
+            
+            
+            
+           
         } finally {
             em.close();
         }
-        return new PersonDTO(updatePerson);
+        return null;
     }
     
     public PersonDTO deletePerson(int id) {

@@ -106,12 +106,12 @@ public class PersonResource {
     }
 
     @PUT
-    @Path("update/{personId}")
+    @Path("update/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String updateSinglePerson(@PathParam("personId") int personId, Person person) {
-        person.setId(personId);
-        return GSON.toJson(FACADE.updatePerson(person, personId));
+    public String updateSinglePerson(@PathParam("id") int id, PersonDTO personDTO) {
+//        person.setId(personId);
+        return GSON.toJson(FACADE.updatePerson(personDTO, id));
     }
 
     @DELETE
