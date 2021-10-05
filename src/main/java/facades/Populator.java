@@ -25,7 +25,7 @@ public class Populator {
         
         Person person = new Person("test@test.com", "Anders", "Larsen");
         Address address = new Address("Flemmingvej 34 1. tv", "Bank på tre gange");
-        CityInfo cityInfo = new CityInfo(1200, "København");
+       CityInfo cityInfo = new CityInfo(10310, "jordbærby");
         person.addHobby(new Hobby("Bage", "Alle bollerne"));
         person.addPhone(new Phone("23756493", "Home phone"));
         address.addPerson(person);
@@ -33,11 +33,11 @@ public class Populator {
 
         Person person1 = new Person("kage@fisk.com", "Lars", "Andersen");
         Address address1 = new Address("Hennigsvej 22 7. th", "Hop tre gange foran døren");
-        CityInfo cityInfo1 = new CityInfo(2970, "Hørsholm");
+       // CityInfo cityInfo1 = new CityInfo(2970, "Hørsholm");
         person1.addHobby(new Hobby("Bage", "Alle bollerne"));
         person1.addPhone(new Phone("75643927", "Ude phone"));
         address1.addPerson(person1);
-        cityInfo1.addAddress(address1);
+       // cityInfo1.addAddress(address1);
 
         em.getTransaction().begin();
         em.persist(person);
