@@ -1,10 +1,89 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="js1.js"></script>
         <title>Start Page</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
+    
+    
     <body>
-        <h1>Change or remove this page</h1>
+        <h1>Change or remove this page.</h1>
+        
+    <div id="demo">
+        <h2>Let AJAX change this text</h2>
+        <button type="button" onclick="getPersonsByHobby()">Change Content</button>
+    </div>
+        
+<form action="index.html">
+  <label for="fname">Insert hobby:</label><br>
+  <input type="text" id="hobby" name="hobby" value="insert a hobby"><br>
+
+  <input type="submit" value="Submit">
+</form>
+        <h2>All Persons</h2>
+    <div style="min-height: 200px;">
+      <table class="table" style="width: 90%">
+        <thead>
+          <tr>
+            <td>Email</td>
+
+        <script>
+        $.get('obj.email');
+        </script>
+            
+            <td>First Name</td>
+            <td>Last name</td>
+            <td>Hobby</td>
+            <td>Phone</td>
+            <td>Street</td>
+            <td>Zip</td>
+            <td>City</td>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <button type="button" id="reload" class="btn btn-secondary">Reload Data</button>
+    <button type="button" id="addPerson" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+      Add New Person
+    </button>
+    <div id="error" class="alert alert-danger" role="alert" style="width: 50%;margin-top:10px;"></div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div id="header" class="modal-header">
+
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="id">
+            <div class="form-group">
+              <label for="fname">First Name</label>
+              <input type="text" class="form-control" id="fname">
+            </div>
+            <div class="form-group">
+              <label for="lname">Last Name</label>
+              <input type="text" class="form-control" name="lname" id="lname">
+            </div>
+            <div class="form-group">
+              <label for="phone">phone</label>
+              <input type="text" class="form-control" name="phone" id="phone">
+            </div>
+
+            <!-- Allow form submission with keyboard without duplicating the dialog button -->
+            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" id="savebtn" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+        
+        
     </body>
 </html>

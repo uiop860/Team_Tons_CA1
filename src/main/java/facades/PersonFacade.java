@@ -143,4 +143,9 @@ public class PersonFacade {
         }
         return new PersonDTO(updatePerson);
     }
+    
+    //TODO - Delete person in database
+    public void deletePerson(int personId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
