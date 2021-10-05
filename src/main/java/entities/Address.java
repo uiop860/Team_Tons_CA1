@@ -76,8 +76,6 @@ public class Address implements Serializable {
         return persons;
     }
 
-
-
     public Integer getId() {
         return id;
     }

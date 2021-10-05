@@ -88,7 +88,7 @@ public class PersonResourceTest
 
             em.persist(address1);
             em.persist(cityInfo1);
-            address1.addCityInfo(cityInfo1);
+            address1.setCityInfo(cityInfo1);
             em.merge(address1);
             em.persist(p1);
             p1.setAddress(address1);

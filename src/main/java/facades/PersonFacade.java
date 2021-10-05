@@ -7,6 +7,7 @@ package facades;
 
 import dtos.CityInfoDTO;
 import dtos.HobbyCountDTO;
+import dtos.HobbyDTO;
 import dtos.PersonDTO;
 import entities.CityInfo;
 import entities.Hobby;
@@ -190,6 +191,39 @@ public class PersonFacade {
             em.merge(personToUpdate);
             em.getTransaction().commit();
         } finally {
+            em.close();
+        }
+        return new PersonDTO(personToUpdate);
+    }
+    
+    public PersonDTO addHobbyToPerson(HobbyDTO hobbyDTO, int id){
+        EntityManager em = emf.createEntityManager();
+        Person personToUpdate;
+        Hobby hobbyToAdd;
+        try{
+            em.getTransaction().begin();
+            personToUpdate = em.find(Person.class, id);
+            hobbyToAdd = new Hobby(hobbyDTO.getName(), hobbyDTO.getDescription());
+            personToUpdate.addHobby(hobbyToAdd);
+            em.merge(personToUpdate);
+            em.getTransaction().commit();
+        }finally{
+            em.close();
+        }
+        return new PersonDTO(personToUpdate);
+    }
+    
+    public PersonDTO removeHobbyFromPerson(HobbyDTO hobbyDTO, int id) {
+        EntityManager em = emf.createEntityManager();
+        Person personToUpdate;
+        try{
+            em.getTransaction().begin();
+            personToUpdate = em.find(Person.class, id);
+            Hobby hobbyToRemove = personToUpdate.removeHobby(new Hobby(hobbyDTO.getName(),hobbyDTO.getDescription()));
+            em.remove(hobbyToRemove);
+            em.merge(personToUpdate);
+            em.getTransaction().commit();
+        }finally{
             em.close();
         }
         return new PersonDTO(personToUpdate);

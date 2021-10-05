@@ -64,6 +64,22 @@ public class Person implements Serializable {
         }
     }
     
+    public Hobby removeHobby(Hobby hobby){
+        Hobby hobbyToRemove = null;
+        if(hobby != null){
+            for(Hobby h: this.hobbies){           
+                if(h.getName().equals(hobby.getName()) && h.getDescription().equals(hobby.getDescription())){
+                    hobbyToRemove = h;
+                }
+            }
+            if(hobbyToRemove != null){
+                this.hobbies.remove(hobbyToRemove);
+            }
+            hobby.setPersons(null);
+        }
+        return hobbyToRemove;
+    }
+    
     public void removePhones(List<Phone> phones){
         if(phones != null){
             this.phones = new ArrayList<>();
