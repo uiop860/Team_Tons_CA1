@@ -23,7 +23,6 @@ public class Populator {
     public static void populate() {
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
         EntityManager em = emf.createEntityManager();
-
        try{
            em.getTransaction().begin();
 
