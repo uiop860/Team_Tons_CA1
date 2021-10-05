@@ -37,10 +37,10 @@ public class PersonDTO {
                 this.address.setCityInfo(new CityInfoDTO(person.getAddress().getCityInfo()));
             }
         }
-        if (person.getHobbies() != null || !person.getHobbies().isEmpty()) {
+        if (person.getHobbies() != null) {
             this.hobbies = HobbyDTO.getDTO(person.getHobbies());
         }
-        if(person.getPhones() != null || !person.getPhones().isEmpty()){
+        if(person.getPhones() != null){
             this.phones = PhoneDTO.getDTO(person.getPhones());        
         }
     }
