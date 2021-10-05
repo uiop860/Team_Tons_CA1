@@ -5,8 +5,6 @@
  */
 package entities;
 
-
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,46 +29,40 @@ public class CityInfo implements Serializable {
     @OneToMany(mappedBy = "cityInfo", cascade = CascadeType.PERSIST)
     private List<Address> addresses;
 
-    public CityInfo(int zipCode, String city)
-    {
+    public CityInfo(int zipCode, String city) {
         this.zipCode = zipCode;
         this.city = city;
-        this.addresses = new ArrayList<>();
     }
 
-    public CityInfo()
-    {
+    public CityInfo() {
     }
 
-    public int getZipCode()
-    {
+    public int getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(int zipCode)
-    {
+    public void setZipCode(int zipCode) {
         this.zipCode = zipCode;
     }
 
-    public String getCity()
-    {
+    public String getCity() {
         return city;
     }
 
-    public void setCity(String city)
-    {
+    public void setCity(String city) {
         this.city = city;
     }
 
-    public List<Address> getAddresses()
-    {
+    public List<Address> getAddresses() {
         return addresses;
     }
 
-    public void addAddress(Address address)
-    {
+    public void addAddress(Address address) {
+        if (this.addresses == null) {
+            this.addresses = new ArrayList<>();
+        }
         this.addresses.add(address);
-        if(address != null) {
+        if (address != null) {
             address.setCityInfo(this);
         }
     }
@@ -83,11 +75,9 @@ public class CityInfo implements Serializable {
         this.id = id;
     }
 
-    
-
     @Override
     public String toString() {
         return "entities.CityInfo[ id=" + id + " ]";
     }
-    
+
 }

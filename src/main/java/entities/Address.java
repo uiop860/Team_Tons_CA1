@@ -24,7 +24,7 @@ public class Address implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String street;
-    private String addionalInfo;
+    private String additionalInfo;
 
     @OneToMany(mappedBy = "address", cascade = CascadeType.PERSIST)
     private List<Person> persons;
@@ -32,58 +32,48 @@ public class Address implements Serializable {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private CityInfo cityInfo;
 
-
-
-    public Address(String street, String addionalInfo)
-    {
+    public Address(String street, String addionalInfo) {
         this.street = street;
-        this.addionalInfo = addionalInfo;
-        this.persons = new ArrayList<>();
+        this.additionalInfo = addionalInfo;
     }
 
-    public Address()
-    {
+    public Address() {
     }
 
-    public CityInfo getCityInfo()
-    {
+    public CityInfo getCityInfo() {
         return cityInfo;
     }
 
-    public void setCityInfo(CityInfo cityInfo)
-    {
+    public void setCityInfo(CityInfo cityInfo) {
         this.cityInfo = cityInfo;
     }
 
-    public String getStreet()
-    {
+    public String getStreet() {
         return street;
     }
 
-    public void setStreet(String street)
-    {
+    public void setStreet(String street) {
         this.street = street;
     }
 
-    public String getAddionalInfo()
-    {
-        return addionalInfo;
+    public String getAdditionalInfo() {
+        return additionalInfo;
     }
 
-    public void setAddionalInfo(String addionalInfo)
-    {
-        this.addionalInfo = addionalInfo;
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
     }
 
-    public List<Person> getPersons()
-    {
+    public List<Person> getPersons() {
         return persons;
     }
 
-    public void addPerson(Person person)
-    {
+    public void addPerson(Person person) {
+        if (persons == null) {
+            this.persons = new ArrayList<>();
+        }
         this.persons.add(person);
-        if(person != null) {
+        if (person != null) {
             person.setAddress(this);
         }
     }
@@ -100,5 +90,5 @@ public class Address implements Serializable {
     public String toString() {
         return "entities.Address[ id=" + id + " ]";
     }
-    
+
 }
