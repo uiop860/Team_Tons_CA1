@@ -36,6 +36,8 @@ public class Person implements Serializable {
 
     @ManyToMany(mappedBy = "persons", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<Hobby> hobbies;
+    
+    public Person() {}
 
     public Person(String email, String firstName, String lastName) {
         this.email = email;
@@ -44,37 +46,62 @@ public class Person implements Serializable {
         this.phones = new ArrayList<>();
         this.hobbies = new ArrayList<>();
         this.address = null;
-    }
-
-    public Person() {
-    }
-
-    public List<Phone> getPhones() {
-        return phones;
-    }
-
-    public List<Hobby> getHobbies() {
-        if (this.hobbies == null) {
-            this.hobbies = new ArrayList<>();
-        }
-        return hobbies;
-    }
-
+    }    
+    
     public void addHobby(Hobby hobby) {
-        if (this.hobbies == null) {
-            this.hobbies = new ArrayList<>();
-        }
         if (hobby != null) {
             this.hobbies.add(hobby);
             hobby.getPersons().add(this);
         }
     }
 
-    public void removeHobby(Hobby hobby) {
-        if (hobby != null) {
-            this.hobbies.remove(hobby);
-            hobby.getPersons().remove(this);
+    public void removeHobbies(List<Hobby> hobbies) {
+        if (hobbies != null) {
+            this.hobbies = new ArrayList<>();
+            hobbies.forEach((t) -> {
+                t.setPersons(null);
+            });
         }
+    }
+    
+    public Hobby removeHobby(Hobby hobby){
+        Hobby hobbyToRemove = null;
+        if(hobby != null){
+            for(Hobby h: this.hobbies){           
+                if(h.getName().equals(hobby.getName()) && h.getDescription().equals(hobby.getDescription())){
+                    hobbyToRemove = h;
+                }
+            }
+            if(hobbyToRemove != null){
+                this.hobbies.remove(hobbyToRemove);
+            }
+            hobby.setPersons(null);
+        }
+        return hobbyToRemove;
+    }
+    
+    public void removePhones(List<Phone> phones){
+        if(phones != null){
+            this.phones = new ArrayList<>();
+            phones.forEach((t) ->{
+                t.setPerson(null);
+            });
+        }
+    }
+    
+    public void addPhone(Phone phone) {
+        this.phones.add(phone);
+        if (phone != null) {
+            phone.setPerson(this);
+        }
+    }
+    
+    public List<Phone> getPhones() {
+        return phones;
+    }
+
+    public List<Hobby> getHobbies() {
+        return hobbies;
     }
 
     public Address getAddress() {
@@ -109,17 +136,6 @@ public class Person implements Serializable {
         this.lastName = lastName;
     }
 
-    public void addPhone(Phone phone) {
-        this.phones.add(phone);
-        if (phone != null) {
-            phone.setPerson(this);
-        }
-    }
-
-    public Person(PersonDTO personByPhone) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     public Integer getId() {
         return id;
     }
@@ -142,6 +158,9 @@ public class Person implements Serializable {
     public String toString() {
         return "entities.Person[ id=" + id + " ]";
     }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> origin/testing
 }

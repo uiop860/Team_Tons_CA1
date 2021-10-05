@@ -17,6 +17,8 @@ public class AddressDTO {
     private String street;
     private String additionalInfo;
     private CityInfoDTO cityInfo;
+
+    public AddressDTO() {}
     
     public AddressDTO(Address address){
         this.street = address.getStreet();
@@ -47,7 +49,4 @@ public class AddressDTO {
     public void setCityInfo(CityInfoDTO cityInfo) {
         this.cityInfo = cityInfo;
     }
-    
-    
-    
 }

@@ -25,6 +25,8 @@ public class PersonDTO {
     private List<HobbyDTO> hobbies;
     private List<PhoneDTO> phones;
 
+    public PersonDTO() {}
+
     public PersonDTO(Person person) {
         this.email = person.getEmail();
         this.firstName = person.getFirstName();
@@ -35,10 +37,10 @@ public class PersonDTO {
                 this.address.setCityInfo(new CityInfoDTO(person.getAddress().getCityInfo()));
             }
         }
-        if (person.getHobbies() != null || !person.getHobbies().isEmpty()) {
+        if (person.getHobbies() != null) {
             this.hobbies = HobbyDTO.getDTO(person.getHobbies());
         }
-        if(person.getPhones() != null || !person.getPhones().isEmpty()){
+        if(person.getPhones() != null){
             this.phones = PhoneDTO.getDTO(person.getPhones());        
         }
     }
@@ -75,5 +77,29 @@ public class PersonDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public AddressDTO getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDTO address) {
+        this.address = address;
+    }
+
+    public List<HobbyDTO> getHobbies() {
+        return hobbies;
+    }
+
+    public void setHobbies(List<HobbyDTO> hobbies) {
+        this.hobbies = hobbies;
+    }
+
+    public List<PhoneDTO> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<PhoneDTO> phones) {
+        this.phones = phones;
     }
 }

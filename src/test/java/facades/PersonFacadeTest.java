@@ -1,6 +1,7 @@
 package facades;
 
 import dtos.CityInfoDTO;
+import dtos.HobbyCountDTO;
 import dtos.PersonDTO;
 import entities.Address;
 import entities.CityInfo;
@@ -48,7 +49,7 @@ public class PersonFacadeTest {
             em.persist(address);
             CityInfo cityInfo = new CityInfo(1200, "København");
             em.persist(cityInfo);
-            address.addCityInfo(cityInfo);
+            address.setCityInfo(cityInfo);
             em.merge(address);
             em.persist(person);
             person.setAddress(address);
@@ -61,7 +62,7 @@ public class PersonFacadeTest {
             em.persist(address1);
             CityInfo cityInfo1 = new CityInfo(2970, "Hørsholm");
             em.persist(cityInfo1);
-            address1.addCityInfo(cityInfo1);
+            address1.setCityInfo(cityInfo1);
             em.merge(address1);
             em.persist(person1);
             person1.setAddress(address1);
@@ -115,8 +116,8 @@ public class PersonFacadeTest {
 
     @Test
     public void testGetNumberOfPersonsByHobby() {
-        long numberOfPersons = facade.getNumberOfPersonsByHobby("Bage");
-        assertEquals(2, numberOfPersons);
+        HobbyCountDTO hobbyCount = facade.getNumberOfPersonsByHobby("Bage");
+        assertEquals(2, hobbyCount.getCount());
     }
 
     @Test

@@ -18,6 +18,8 @@ public class CityInfoDTO {
     private int zipCode;
     private String city;
 
+    public CityInfoDTO() {}
+
     public CityInfoDTO(CityInfo cityInfo) {
         this.zipCode = cityInfo.getZipCode();
         this.city = cityInfo.getCity();
@@ -35,5 +37,13 @@ public class CityInfoDTO {
 
     public void setZipCode(int zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

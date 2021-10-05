@@ -28,14 +28,13 @@ public class Hobby implements Serializable {
 
     @ManyToMany()
     private List<Person> persons;
+    
+    public Hobby() {}
 
     public Hobby(String name, String description) {
         this.name = name;
         this.description = description;
         this.persons = new ArrayList<>();
-    }
-
-    public Hobby() {
     }
 
     public String getName() {
@@ -55,16 +54,10 @@ public class Hobby implements Serializable {
     }
 
     public List<Person> getPersons() {
-        if (persons == null) {
-            this.persons = new ArrayList<>();
-        }
         return persons;
     }
 
     public void setPersons(List<Person> persons) {
-        if (persons == null) {
-            this.persons = new ArrayList<>();
-        }
         this.persons = persons;
     }
 
