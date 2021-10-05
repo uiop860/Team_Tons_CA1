@@ -28,13 +28,13 @@ public class Person implements Serializable {
     private String firstName;
     private String lastName;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private List<Phone> phones;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private Address address;
 
-    @ManyToMany(mappedBy = "persons", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "persons", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<Hobby> hobbies;
 
     public Person(String email, String firstName, String lastName) {
@@ -42,32 +42,11 @@ public class Person implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phones = new ArrayList<>();
-
+        this.hobbies = new ArrayList<>();
+        this.address = null;
     }
 
     public Person() {
-    }
-
-    public Person updatePerson(Person person) {
-        this.email = person.getEmail();
-        this.firstName = person.getFirstName();
-        this.lastName = person.getLastName();
-        if (person.getAddress() != null) {
-            this.address = person.getAddress();
-            person.getAddress().addPerson(this);
-//            setAddress(person.getAddress());
-//            this.setAddress(person.getAddress());
-        }
-        if (person.getHobbies() != null) {
-//            this.hobbies = person.getHobbies();
-            person.getHobbies().forEach(x -> {
-                addHobby(x);
-            });
-        }
-        if (person.getPhones() != null) {
-            this.phones = person.getPhones();
-        }
-        return person;
     }
 
     public List<Phone> getPhones() {
