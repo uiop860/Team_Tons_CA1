@@ -74,11 +74,6 @@ public class PersonResource {
     @Path("city/{city}")
     @Produces({MediaType.APPLICATION_JSON})
     public String getPersonsByCity(@PathParam("city") String city) {
-<<<<<<< HEAD
-       
-=======
-
->>>>>>> origin/testing
         List<PersonDTO> personsCity = FACADE.getPersonsByCity(city);
 
         if (personsCity != null) {

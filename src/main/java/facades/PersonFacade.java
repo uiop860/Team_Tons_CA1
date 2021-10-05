@@ -143,13 +143,7 @@ public class PersonFacade {
         }
         return new PersonDTO(updatePerson);
     }
-<<<<<<< HEAD
     
-    //TODO - Delete person in database
-    public void deletePerson(int personId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-=======
-
     public PersonDTO deletePerson(int id) {
         EntityManager em = emf.createEntityManager();
         Person person;
@@ -162,6 +156,6 @@ public class PersonFacade {
             em.close();
         }
         return new PersonDTO(person);
->>>>>>> origin/testing
+
     }
 }

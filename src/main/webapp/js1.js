@@ -1,5 +1,6 @@
 function getPersonsByHobby() {
-fetch("http://localhost:8080/dat3-startcode/api/person/hobby/bage")
+document.getElementById(hobbyInput.valueOf());
+fetch("http://localhost:8080/dat3-startcode/api/person/hobby/"+hobbyInputhobbyInput.valueOf())
   .then(function(response) {
     return response.json();
    })
@@ -8,9 +9,6 @@ fetch("http://localhost:8080/dat3-startcode/api/person/hobby/bage")
     let obj = JSON.parse(data);
    });
 }
-
-obj.email[0];
-
 
 let options = {
    method: "POST",
