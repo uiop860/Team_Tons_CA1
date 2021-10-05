@@ -1,5 +1,7 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import entities.*;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
@@ -7,26 +9,32 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
+import io.restassured.response.Response;
 
+import javax.json.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.replaceFiltersWith;
 import static org.hamcrest.Matchers.*;
 
 public class PersonResourceTest
 {
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api/";
-    private static Person p1, p2;
+    private static Person p1, p2, p3, p4, p5;
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
@@ -60,6 +68,10 @@ public class PersonResourceTest
         EntityManager em = emf.createEntityManager();
         p1 = new Person("PeterParker@test.com","Peter", "Parker");
         p2 = new Person("TonyStark@test.com", "Tony", "Stark");
+        p3 = new Person("BlackWidow@test.com", "Natasha", "Romanoff");
+        p4 = new Person("ThorOdinson@test.com", "Thor", "Odinson");
+        p5 = new Person("LokeOdinson@test.com", "Loke", "Odinson");
+
 
         Phone phone1 = new Phone("20212021", "This year");
         Phone phone2 = new Phone("20202020", "Last year");
@@ -88,12 +100,14 @@ public class PersonResourceTest
 
             em.persist(address1);
             em.persist(cityInfo1);
-            address1.addCityInfo(cityInfo1);
+            address1.setCityInfo(cityInfo1);
             em.merge(address1);
             em.persist(p1);
             p1.setAddress(address1);
             em.merge(p1);
             em.persist(p2);
+            em.persist(p3);
+            em.persist(p4);
             em.getTransaction().commit();
         } finally
         {
@@ -157,6 +171,54 @@ public class PersonResourceTest
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body(equalTo("2"));
+                .body("count", equalTo(2));
+    }
+
+  @Test
+    public void testCreatePerson() {
+        Response response = given()
+                .header("Content-type", "application/json")
+                .and()
+                .body(GSON.toJson(new Person("SteveRogers@test.com", "Steve", "Rogers")))
+                .when()
+                .post("/person/create")
+                .then()
+                .extract().response();
+
+        Assertions.assertEquals(200, response.getStatusCode());
+        Assertions.assertEquals("Steve", response.jsonPath().getString("firstName"));
+        Assertions.assertEquals("Rogers", response.jsonPath().getString("lastName"));
+        Assertions.assertEquals("SteveRogers@test.com", response.jsonPath().getString("email"));
+    }
+
+    @Test
+    public void testUpdatePerson() {
+        Response response = given()
+                .header("Content-type", "application/json")
+                .and()
+                .body(GSON.toJson(p5))
+                .when()
+                .put("/person/update/3")
+                .then()
+                .extract().response();
+       // Assertions.assertEquals("LokeOdinson@test.com", response.jsonPath().getString("email"));
+        Assertions.assertEquals(200, response.getStatusCode());
+        Assertions.assertEquals("Loke", response.jsonPath().getString("firstName"));
+        Assertions.assertEquals("Odinson", response.jsonPath().getString("lastName"));
+
+
+    }
+
+    @Test
+    public void testDeletePerson()
+    {
+        Response response = given()
+                .header("Content-type", "application/json")
+                .when()
+                .delete("/person/delete/3")
+                .then()
+                .extract().response();
+
+        Assertions.assertEquals(200, response.getStatusCode());
     }
 }
