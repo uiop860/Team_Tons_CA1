@@ -10,6 +10,7 @@ import entities.Phone;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,18 +39,7 @@ public class PersonFacadeTest {
     public void setUp() throws Exception {
         EntityManager em = emf.createEntityManager();
         try {
-            em.getTransaction().begin();
-            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
-            em.createNamedQuery("Phone.resetAutoIncrement").executeUpdate();
-            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-            em.createNamedQuery("Person.resetAutoIncrement").executeUpdate();
-            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
-            em.createNamedQuery("Address.resetAutoIncrement").executeUpdate();
-            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
-            em.createNamedQuery("Hobby.resetAutoIncrement").executeUpdate();
-            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
-            em.createNamedQuery("CityInfo.resetAutoIncrement").executeUpdate();
-            em.getTransaction().commit();
+            
 
             Person person = new Person("test@test.com", "Anders", "Larsen");
             person.addHobby(new Hobby("Bage", "Alle bollerne"));
@@ -75,6 +65,27 @@ public class PersonFacadeTest {
             em.persist(person1);
             em.getTransaction().commit();
         } finally {
+            em.close();
+        }
+    }
+    
+    @AfterEach
+    public void tearDown() throws Exception{
+        EntityManager em = emf.createEntityManager();
+        try{
+            em.getTransaction().begin();
+            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Phone.resetAutoIncrement").executeUpdate();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Person.resetAutoIncrement").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.resetAutoIncrement").executeUpdate();
+            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Hobby.resetAutoIncrement").executeUpdate();
+            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
+            em.createNamedQuery("CityInfo.resetAutoIncrement").executeUpdate();
+            em.getTransaction().commit();
+        }finally{
             em.close();
         }
     }
