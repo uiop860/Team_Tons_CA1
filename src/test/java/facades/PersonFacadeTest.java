@@ -1,6 +1,7 @@
 package facades;
 
 import dtos.CityInfoDTO;
+import dtos.HobbyCountDTO;
 import dtos.PersonDTO;
 import entities.Address;
 import entities.CityInfo;
@@ -115,8 +116,8 @@ public class PersonFacadeTest {
 
     @Test
     public void testGetNumberOfPersonsByHobby() {
-        long numberOfPersons = facade.getNumberOfPersonsByHobby("Bage");
-        assertEquals(2, numberOfPersons);
+        HobbyCountDTO hobbyCount = facade.getNumberOfPersonsByHobby("Bage");
+        assertEquals(2, hobbyCount.getCount());
     }
 
     @Test

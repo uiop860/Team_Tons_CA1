@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.HobbyCountDTO;
 import dtos.PersonDTO;
 import entities.Person;
 import utils.EMF_Creator;
@@ -89,10 +90,10 @@ public class PersonResource {
     @Produces({MediaType.APPLICATION_JSON})
     public String hobbyCount(@PathParam("hobby") String hobby) {
 
-        long numberOfPersonsByHobby = FACADE.getNumberOfPersonsByHobby(hobby);
+        HobbyCountDTO hobbyCount = FACADE.getNumberOfPersonsByHobby(hobby);
 
-        if (numberOfPersonsByHobby != 0) {
-            return GSON.toJson(numberOfPersonsByHobby);
+        if (hobbyCount != null) {
+            return GSON.toJson(hobbyCount);
         } else {
             return "{\"msg\":\"No one has this hobby.\"}";
         }

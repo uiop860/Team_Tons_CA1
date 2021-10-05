@@ -6,6 +6,7 @@
 package facades;
 
 import dtos.CityInfoDTO;
+import dtos.HobbyCountDTO;
 import dtos.PersonDTO;
 import entities.CityInfo;
 import entities.Hobby;
@@ -83,7 +84,7 @@ public class PersonFacade {
         return PersonDTO.getDTO(persons);
     }
 
-    public long getNumberOfPersonsByHobby(String hobby) {
+    public HobbyCountDTO getNumberOfPersonsByHobby(String hobby) {
         EntityManager em = emf.createEntityManager();
         long count;
         try {
@@ -93,7 +94,7 @@ public class PersonFacade {
         } finally {
             em.close();
         }
-        return count;
+        return new HobbyCountDTO(count);
     }
 
     public List<CityInfoDTO> getAllZipCodes() {
