@@ -10,6 +10,7 @@ import dtos.HobbyCountDTO;
 import dtos.HobbyDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
+import entities.Address;
 import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
@@ -112,23 +113,52 @@ public class PersonFacade {
 
     public PersonDTO getPersonByID(int id) {
         EntityManager em = emf.createEntityManager();
-        PersonDTO person;
+        Person person;
         try {
             em.getTransaction().begin();
-            person = new PersonDTO(em.find(Person.class, id));
+            person = em.find(Person.class, id);
             em.getTransaction().commit();
         } finally {
             em.close();
         }
-        return person;
+        return new PersonDTO(person);
     }
-
+    
     public PersonDTO insertPerson(PersonDTO personDTO) {
         EntityManager em = emf.createEntityManager();
-        Person personToInsert = new Person(personDTO.getEmail(), personDTO.getFirstName(), personDTO.getLastName());
+        Person personToInsert = null;
+        boolean addresUpdated = false;
         try {
             em.getTransaction().begin();
-            em.persist(personToInsert);
+            Address address = null;
+            if(personDTO.getAddress() != null){
+                address = new Address(personDTO.getAddress().getStreet(),personDTO.getAddress().getAdditionalInfo());
+                addresUpdated = true;
+                if(personDTO.getAddress().getCityInfo() != null){
+                    address.setCityInfo(new CityInfo(personDTO.getAddress().getCityInfo().getZipCode(),personDTO.getAddress().getCityInfo().getCity()));
+                    em.merge(address);
+                }
+                if(personDTO.getAddress().getCityInfo() == null){
+                    em.merge(address);
+                }
+            }
+            if(personDTO.getEmail() != null && personDTO.getFirstName() != null && personDTO.getLastName() != null){
+                personToInsert = new Person(personDTO.getEmail(),personDTO.getFirstName(),personDTO.getLastName());
+                if(personDTO.getHobbies() != null){
+                    for(HobbyDTO h: personDTO.getHobbies()){
+                        personToInsert.addHobby(new Hobby(h.getName(), h.getDescription()));
+                    }
+                }
+                if(personDTO.getPhones() != null){
+                    for (PhoneDTO h : personDTO.getPhones()) {
+                        personToInsert.addPhone(new Phone(h.getNumber(), h.getDescription()));
+                    }
+                }
+            }
+            if(addresUpdated && address != null){
+                personToInsert.setAddress(address);
+            }
+            em.merge(personToInsert);
             em.getTransaction().commit();
         } finally {
             em.close();
