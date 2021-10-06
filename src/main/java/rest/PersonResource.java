@@ -5,7 +5,9 @@ import com.google.gson.GsonBuilder;
 import dtos.HobbyCountDTO;
 import dtos.HobbyDTO;
 import dtos.PersonDTO;
+import dtos.PhoneDTO;
 import entities.Person;
+import facades.PhoneFacade;
 import utils.EMF_Creator;
 import facades.PersonFacade;
 import java.util.List;
@@ -29,6 +31,7 @@ public class PersonResource {
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final PersonFacade FACADE = PersonFacade.getPersonFacade(EMF);
+    private static final PhoneFacade PHONE_FACADE = PhoneFacade.getPhoneFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @GET
@@ -135,4 +138,6 @@ public class PersonResource {
     public String deleteSinglePerson(@PathParam("personId") int personId) {
         return GSON.toJson(FACADE.deletePerson(personId));
     }
+
+
 }
