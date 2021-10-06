@@ -98,15 +98,15 @@ public class PersonResource {
     }
 
     @POST
-    @Path("create")
+    @Path("createPerson")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String createPerson(Person person) {
-        return GSON.toJson(FACADE.insertPerson(person));
+    public String createPerson(PersonDTO personDTO) {
+        return GSON.toJson(FACADE.insertPerson(personDTO));
     }
 
     @PUT
-    @Path("update/{id}")
+    @Path("updatePerson/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String updateSinglePerson(@PathParam("id") int id, PersonDTO personDTO) {
@@ -146,10 +146,10 @@ public class PersonResource {
     }
 
     @DELETE
-    @Path("delete/{personId}")
+    @Path("removePerson/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String deleteSinglePerson(@PathParam("personId") int personId) {
-        return GSON.toJson(FACADE.deletePerson(personId));
+    public String deleteSinglePerson(@PathParam("id") int id) {
+        return GSON.toJson(FACADE.deletePerson(id));
     }
 }

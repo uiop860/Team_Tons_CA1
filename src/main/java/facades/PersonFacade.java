@@ -123,16 +123,17 @@ public class PersonFacade {
         return person;
     }
 
-    public PersonDTO insertPerson(Person person) {
+    public PersonDTO insertPerson(PersonDTO personDTO) {
         EntityManager em = emf.createEntityManager();
+        Person personToInsert = new Person(personDTO.getEmail(), personDTO.getFirstName(), personDTO.getLastName());
         try {
             em.getTransaction().begin();
-            em.persist(person);
+            em.persist(personToInsert);
             em.getTransaction().commit();
         } finally {
             em.close();
         }
-        return new PersonDTO(person);
+        return new PersonDTO(personToInsert);
     }
 
     public PersonDTO updatePerson(PersonDTO personDTO, int id) {
@@ -146,11 +147,12 @@ public class PersonFacade {
             if(personDTO.getFirstName() != null){
                 personToUpdate.setFirstName(personDTO.getFirstName());
             }
-            
             if(personDTO.getLastName() != null){
                 personToUpdate.setLastName(personDTO.getLastName());
             }
-            
+            if(personDTO.getEmail() != null){
+                personToUpdate.setEmail(personDTO.getEmail());
+            }            
             if(personDTO.getAddress() != null){
                 if(personDTO.getAddress().getAdditionalInfo() != null){
                     personToUpdate.getAddress().setAdditionalInfo(personDTO.getAddress().getAdditionalInfo());
@@ -167,7 +169,6 @@ public class PersonFacade {
                     }
                 }
             }
-            
             if(personDTO.getHobbies() != null){
                 personToUpdate.getHobbies().forEach((t) -> {
                     em.remove(t);
@@ -177,7 +178,6 @@ public class PersonFacade {
                     personToUpdate.addHobby(new Hobby(t.getName(),t.getDescription()));
                 });
             }
-            
             if(personDTO.getPhones() != null ){
                 personToUpdate.getPhones().forEach((t) ->{
                     em.remove(t);
@@ -187,7 +187,6 @@ public class PersonFacade {
                     personToUpdate.addPhone(new Phone(t.getNumber(),t.getDescription()));
                 });
             }
-            
             em.merge(personToUpdate);
             em.getTransaction().commit();
         } finally {
@@ -264,6 +263,22 @@ public class PersonFacade {
         try {
             em.getTransaction().begin();
             person = em.find(Person.class, id);
+            if(person.getPhones() != null){
+                person.getPhones().forEach((t) -> {
+                    em.remove(t);
+                });
+            }
+            if(person.getAddress() != null){
+                em.remove(person.getAddress());
+                if(person.getAddress().getCityInfo() != null){
+                    em.remove(person.getAddress().getCityInfo());
+                }
+            }
+            if(person.getHobbies() != null){
+                person.getHobbies().forEach((t) -> {
+                    em.remove(t);
+                });
+            }
             em.remove(person);
             em.getTransaction().commit();
         } finally {
