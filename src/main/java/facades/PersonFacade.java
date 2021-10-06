@@ -9,6 +9,7 @@ import dtos.CityInfoDTO;
 import dtos.HobbyCountDTO;
 import dtos.HobbyDTO;
 import dtos.PersonDTO;
+import dtos.PhoneDTO;
 import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
@@ -40,7 +41,6 @@ public class PersonFacade {
         if (instance == null) {
             emf = _emf;
             instance = new PersonFacade();
-//            Populator.populate();
         }
         return instance;
     }
@@ -199,12 +199,10 @@ public class PersonFacade {
     public PersonDTO addHobbyToPerson(HobbyDTO hobbyDTO, int id){
         EntityManager em = emf.createEntityManager();
         Person personToUpdate;
-        Hobby hobbyToAdd;
         try{
             em.getTransaction().begin();
             personToUpdate = em.find(Person.class, id);
-            hobbyToAdd = new Hobby(hobbyDTO.getName(), hobbyDTO.getDescription());
-            personToUpdate.addHobby(hobbyToAdd);
+            personToUpdate.addHobby(new Hobby(hobbyDTO.getName(), hobbyDTO.getDescription()));
             em.merge(personToUpdate);
             em.getTransaction().commit();
         }finally{
@@ -219,11 +217,42 @@ public class PersonFacade {
         try{
             em.getTransaction().begin();
             personToUpdate = em.find(Person.class, id);
-            Hobby hobbyToRemove = personToUpdate.removeHobby(new Hobby(hobbyDTO.getName(),hobbyDTO.getDescription()));
+            Hobby hobbyToRemove = personToUpdate.removeHobby(hobbyDTO);
             em.remove(hobbyToRemove);
             em.merge(personToUpdate);
             em.getTransaction().commit();
         }finally{
+            em.close();
+        }
+        return new PersonDTO(personToUpdate);
+    }
+    
+    public PersonDTO deletePhone(PhoneDTO phoneDTO, int id) {
+        EntityManager em = emf.createEntityManager();
+        Person personToUpdate;
+        try {
+            em.getTransaction().begin();
+            personToUpdate = em.find(Person.class, id);
+            Phone phoneToRemove = personToUpdate.removePhone(phoneDTO);
+            em.remove(phoneToRemove);
+            em.merge(personToUpdate);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        return new PersonDTO(personToUpdate);
+    }
+
+    public PersonDTO addPhone(PhoneDTO phoneDTO, int personId) {
+        EntityManager em = emf.createEntityManager();
+        Person personToUpdate;
+        try {
+            em.getTransaction().begin();
+            personToUpdate = em.find(Person.class, personId);
+            personToUpdate.addPhone(new Phone(phoneDTO.getNumber(), phoneDTO.getDescription()));
+            em.merge(personToUpdate);
+            em.getTransaction().commit();
+        } finally {
             em.close();
         }
         return new PersonDTO(personToUpdate);
@@ -242,5 +271,4 @@ public class PersonFacade {
         }
         return new PersonDTO(person);
     }
-
 }

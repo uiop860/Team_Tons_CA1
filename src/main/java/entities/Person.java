@@ -5,7 +5,8 @@
  */
 package entities;
 
-import dtos.PersonDTO;
+import dtos.HobbyDTO;
+import dtos.PhoneDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,18 +65,18 @@ public class Person implements Serializable {
         }
     }
     
-    public Hobby removeHobby(Hobby hobby){
+    public Hobby removeHobby(HobbyDTO hobbyDTO){
         Hobby hobbyToRemove = null;
-        if(hobby != null){
+        if(hobbyDTO != null){
             for(Hobby h: this.hobbies){           
-                if(h.getName().equals(hobby.getName()) && h.getDescription().equals(hobby.getDescription())){
+                if(h.getName().equals(hobbyDTO.getName()) && h.getDescription().equals(hobbyDTO.getDescription())){
                     hobbyToRemove = h;
                 }
             }
             if(hobbyToRemove != null){
                 this.hobbies.remove(hobbyToRemove);
             }
-            hobby.setPersons(null);
+//            hobbyDTO.setPersons(null);
         }
         return hobbyToRemove;
     }
@@ -87,6 +88,22 @@ public class Person implements Serializable {
                 t.setPerson(null);
             });
         }
+    }
+    
+    public Phone removePhone(PhoneDTO phoneDTO){
+        Phone phoneToRemove = null;
+        if (phoneDTO != null) {
+            for (Phone p : this.phones) {
+                if (p.getNumber().equals(phoneDTO.getNumber()) && p.getDescription().equals(phoneDTO.getDescription())) {
+                    phoneToRemove = p;
+                }
+            }
+            if (phoneToRemove != null) {
+                this.phones.remove(phoneToRemove);
+            }
+//            phone.setPerson(null);
+        }
+        return phoneToRemove;
     }
     
     public void addPhone(Phone phone) {

@@ -7,8 +7,6 @@ import dtos.HobbyDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import entities.Person;
-import facades.PhoneFacade;
-import utils.EMF_Creator;
 import facades.PersonFacade;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
@@ -21,6 +19,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import utils.EMF_Creator;
 
 /**
  *
@@ -31,7 +30,6 @@ public class PersonResource {
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final PersonFacade FACADE = PersonFacade.getPersonFacade(EMF);
-    private static final PhoneFacade PHONE_FACADE = PhoneFacade.getPhoneFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @GET
@@ -124,11 +122,27 @@ public class PersonResource {
     }
     
     @PUT
+    @Path("addPhone/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String addPhone(@PathParam("id") int id, PhoneDTO phoneDTO) {
+        return GSON.toJson(FACADE.addPhone(phoneDTO, id));
+    }
+    
+    @DELETE
     @Path("removeHobby/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String removeHobby(@PathParam("id") int id, HobbyDTO hobbyDTO){
         return GSON.toJson(FACADE.removeHobbyFromPerson(hobbyDTO,id));
+    }
+
+    @DELETE
+    @Path("removePhone/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String deletePhone(@PathParam("id") int id, PhoneDTO phoneDTO) {
+        return GSON.toJson(FACADE.deletePhone(phoneDTO, id));
     }
 
     @DELETE
@@ -138,6 +152,4 @@ public class PersonResource {
     public String deleteSinglePerson(@PathParam("personId") int personId) {
         return GSON.toJson(FACADE.deletePerson(personId));
     }
-
-
 }

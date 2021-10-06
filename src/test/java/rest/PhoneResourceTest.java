@@ -2,24 +2,21 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dtos.PhoneDTO;
 import entities.*;
 import io.restassured.RestAssured;
+import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.when;
 import io.restassured.parsing.Parser;
 import io.restassured.response.Response;
+import java.net.URI;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.core.UriBuilder;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-
-import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
 
 public class PhoneResourceTest
 {
