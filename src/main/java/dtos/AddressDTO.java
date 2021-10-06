@@ -12,18 +12,18 @@ import entities.Address;
  * @author olive
  */
 public class AddressDTO {
-    
-    
+
     private String street;
     private String additionalInfo;
     private CityInfoDTO cityInfo;
 
-    public AddressDTO() {}
-    
-    public AddressDTO(Address address){
+    public AddressDTO() {
+    }
+
+    public AddressDTO(Address address) {
         this.street = address.getStreet();
         this.additionalInfo = address.getAdditionalInfo();
-        if(address.getCityInfo() != null){
+        if (address.getCityInfo() != null) {
             this.cityInfo = new CityInfoDTO(address.getCityInfo());
         }
     }

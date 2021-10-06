@@ -11,7 +11,6 @@ import entities.Phone;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +40,7 @@ public class PersonFacadeTest {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            
+
             em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
             em.createNamedQuery("Phone.resetAutoIncrement").executeUpdate();
             em.createNamedQuery("Person.deleteAllRows").executeUpdate();
@@ -56,19 +55,19 @@ public class PersonFacadeTest {
             Address address = new Address("Flemmingvej 34 1. tv", "Bank på tre gange");
             address.setCityInfo(new CityInfo(1200, "København"));
             em.merge(address);
-            
+
             Person person = new Person("test@test.com", "Anders", "Larsen");
             person.addHobby(new Hobby("Bage", "Alle bollerne"));
             person.addPhone(new Phone("23756493", "Home phone"));
             person.setAddress(address);
             em.merge(person);
             em.getTransaction().commit();
-            
+
             em.getTransaction().begin();
             Address address1 = new Address("Hennigsvej 22 7. th", "Hop tre gange foran døren");
             address1.setCityInfo(new CityInfo(2970, "Hørsholm"));
             em.merge(address1);
-            
+
             Person person1 = new Person("kage@fisk.com", "Lars", "Andersen");
             person1.addHobby(new Hobby("Bage", "Alle bollerne"));
             person1.addPhone(new Phone("75643927", "Ude phone"));

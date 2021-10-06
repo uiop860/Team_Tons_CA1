@@ -11,7 +11,6 @@ import static io.restassured.RestAssured.given;
 import io.restassured.parsing.Parser;
 import io.restassured.response.Response;
 import java.net.URI;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
@@ -60,7 +59,7 @@ public class PersonResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        
+
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
@@ -73,11 +72,11 @@ public class PersonResourceTest {
             em.createNamedQuery("Address.resetAutoIncrement").executeUpdate();
             em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
             em.createNamedQuery("CityInfo.resetAutoIncrement").executeUpdate();
-            
+
             Address address = new Address("Queensvej", "Der hvor spiderman bor");
             address.setCityInfo(new CityInfo(9820, "New York"));
             em.merge(address);
-            
+
             Person person = new Person("peter@parker.com", "Peter", "Parker");
             person.addHobby(new Hobby("Badre", "Badre skurke"));
             person.addPhone(new Phone("20212021", "This year"));
@@ -155,7 +154,7 @@ public class PersonResourceTest {
     public void testFindNumberOfPersonsWithHobby() {
         given()
                 .contentType("application/json")
-                .get("/person/hobbycount/Badre")
+                .get("/person/hobbyCount/Badre")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
@@ -163,7 +162,7 @@ public class PersonResourceTest {
     }
 
     @Test
-    public void testCreatePerson() {
+    public void testInsertPerson() {
         Response response = given()
                 .contentType("application/json")
                 .and()
@@ -180,7 +179,7 @@ public class PersonResourceTest {
 
     @Test
     public void testUpdatePerson() {
-        PersonDTO personDTO = new PersonDTO(new Person("loke@odinson.com","Loke","Odinson"));
+        PersonDTO personDTO = new PersonDTO(new Person("loke@odinson.com", "Loke", "Odinson"));
         Response response = given()
                 .contentType("application/json")
                 .and()
@@ -195,10 +194,10 @@ public class PersonResourceTest {
         Assertions.assertEquals("Odinson", response.jsonPath().getString("lastName"));
 
     }
-    
+
     @Test
     public void testAddHobby() {
-        HobbyDTO hobbyDTO = new HobbyDTO(new Hobby("Killing","Ice giants"));
+        HobbyDTO hobbyDTO = new HobbyDTO(new Hobby("Killing", "Ice giants"));
         Response response = given()
                 .contentType("application/json")
                 .and()
@@ -213,7 +212,7 @@ public class PersonResourceTest {
         Assertions.assertEquals("Killing", hobbyResponse.getName());
         Assertions.assertEquals("Ice giants", hobbyResponse.getDescription());
     }
-    
+
 //    TODO: no worky, gives statusCode 400
 //    @Test
     public void testRemoveHobby() {
@@ -231,7 +230,7 @@ public class PersonResourceTest {
         response.jsonPath().prettyPeek();
         Assertions.assertEquals(true, response.jsonPath().getList("hobbies").isEmpty());
     }
-    
+
     @Test
     public void testAddPhone() {
         PhoneDTO phoneDTO = new PhoneDTO(new Phone("75648326", "Hulks phone number"));
@@ -278,6 +277,4 @@ public class PersonResourceTest {
 
         Assertions.assertEquals(200, response.getStatusCode());
     }
-
-    
 }
