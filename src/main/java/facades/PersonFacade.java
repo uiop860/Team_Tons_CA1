@@ -255,15 +255,14 @@ public class PersonFacade {
         }
         return new PersonDTO(personToUpdate);
     }
-    
-    public PersonDTO deletePhone(PhoneDTO phoneDTO, int id) {
+
+    public PersonDTO addPhoneToPerson(PhoneDTO phoneDTO, int personId) {
         EntityManager em = emf.createEntityManager();
         Person personToUpdate;
         try {
             em.getTransaction().begin();
-            personToUpdate = em.find(Person.class, id);
-            Phone phoneToRemove = personToUpdate.removePhone(phoneDTO);
-            em.remove(phoneToRemove);
+            personToUpdate = em.find(Person.class, personId);
+            personToUpdate.addPhone(new Phone(phoneDTO.getNumber(), phoneDTO.getDescription()));
             em.merge(personToUpdate);
             em.getTransaction().commit();
         } finally {
@@ -271,14 +270,15 @@ public class PersonFacade {
         }
         return new PersonDTO(personToUpdate);
     }
-
-    public PersonDTO addPhone(PhoneDTO phoneDTO, int personId) {
+    
+    public PersonDTO removePhoneFromPerson(PhoneDTO phoneDTO, int id) {
         EntityManager em = emf.createEntityManager();
         Person personToUpdate;
         try {
             em.getTransaction().begin();
-            personToUpdate = em.find(Person.class, personId);
-            personToUpdate.addPhone(new Phone(phoneDTO.getNumber(), phoneDTO.getDescription()));
+            personToUpdate = em.find(Person.class, id);
+            Phone phoneToRemove = personToUpdate.removePhone(phoneDTO);
+            em.remove(phoneToRemove);
             em.merge(personToUpdate);
             em.getTransaction().commit();
         } finally {

@@ -126,7 +126,7 @@ public class PersonResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String addPhone(@PathParam("id") int id, PhoneDTO phoneDTO) {
-        return GSON.toJson(FACADE.addPhone(phoneDTO, id));
+        return GSON.toJson(FACADE.addPhoneToPerson(phoneDTO, id));
     }
     
     @DELETE
@@ -142,7 +142,7 @@ public class PersonResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String deletePhone(@PathParam("id") int id, PhoneDTO phoneDTO) {
-        return GSON.toJson(FACADE.deletePhone(phoneDTO, id));
+        return GSON.toJson(FACADE.removePhoneFromPerson(phoneDTO, id));
     }
 
     @DELETE

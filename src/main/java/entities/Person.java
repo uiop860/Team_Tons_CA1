@@ -76,7 +76,6 @@ public class Person implements Serializable {
             if(hobbyToRemove != null){
                 this.hobbies.remove(hobbyToRemove);
             }
-//            hobbyDTO.setPersons(null);
         }
         return hobbyToRemove;
     }
@@ -101,7 +100,6 @@ public class Person implements Serializable {
             if (phoneToRemove != null) {
                 this.phones.remove(phoneToRemove);
             }
-//            phone.setPerson(null);
         }
         return phoneToRemove;
     }
