@@ -15,9 +15,10 @@ import java.util.List;
  */
 public class PersonDTO {
 
-    private String email;
     private String firstName;
     private String lastName;
+    private String email;
+    private int id;
     private AddressDTO address;
     private List<HobbyDTO> hobbies;
     private List<PhoneDTO> phones;
@@ -29,6 +30,7 @@ public class PersonDTO {
         this.email = person.getEmail();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
+        this.id = person.getId();
         if (person.getAddress() != null) {
             this.address = new AddressDTO(person.getAddress());
             if (person.getAddress().getCityInfo() != null) {

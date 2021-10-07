@@ -59,6 +59,8 @@ public class Populator {
     }
 
     public static void main(String[] args) {
-        populate();
+        for (int i = 0; i < 10; i++) {
+            populate();
+        }
     }
 }
