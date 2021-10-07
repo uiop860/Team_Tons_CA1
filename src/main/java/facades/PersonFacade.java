@@ -45,6 +45,18 @@ public class PersonFacade {
         }
         return instance;
     }
+    
+    public List<PersonDTO> getAllPersons(){
+        EntityManager em = emf.createEntityManager();
+        List<Person> persons;
+        try{
+            TypedQuery<Person> tq = em.createQuery("SELECT p FROM Person p", Person.class);
+            persons = tq.getResultList();
+        }finally{
+            em.close();
+        }
+        return PersonDTO.getDTO(persons);
+    }
 
     public PersonDTO getPersonByPhone(String number) {
         EntityManager em = emf.createEntityManager();
