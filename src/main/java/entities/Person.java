@@ -158,9 +158,4 @@ public class Person implements Serializable {
     public String toString() {
         return "entities.Person[ id=" + id + " ]";
     }
-<<<<<<< HEAD
-
-
-=======
->>>>>>> origin/testing
 }
