@@ -14,18 +14,19 @@ import java.util.List;
  * @author olive
  */
 public class HobbyDTO {
-    
+
     private String name;
     private String description;
 
-    public HobbyDTO() {}
-    
-    public HobbyDTO(Hobby hobby){
+    public HobbyDTO() {
+    }
+
+    public HobbyDTO(Hobby hobby) {
         this.name = hobby.getName();
         this.description = hobby.getDescription();
     }
-    
-    public static List<HobbyDTO> getDTO(List<Hobby> hobbies){
+
+    public static List<HobbyDTO> getDTO(List<Hobby> hobbies) {
         List<HobbyDTO> hobbiesDTO = new ArrayList<>();
         hobbies.forEach(x -> hobbiesDTO.add(new HobbyDTO(x)));
         return hobbiesDTO;

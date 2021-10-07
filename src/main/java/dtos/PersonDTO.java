@@ -5,10 +5,7 @@
  */
 package dtos;
 
-import entities.Address;
-import entities.CityInfo;
-import entities.Hobby;
-import entities.Person;
+import entities.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +22,8 @@ public class PersonDTO {
     private List<HobbyDTO> hobbies;
     private List<PhoneDTO> phones;
 
-    public PersonDTO() {}
+    public PersonDTO() {
+    }
 
     public PersonDTO(Person person) {
         this.email = person.getEmail();
@@ -40,8 +38,8 @@ public class PersonDTO {
         if (person.getHobbies() != null) {
             this.hobbies = HobbyDTO.getDTO(person.getHobbies());
         }
-        if(person.getPhones() != null){
-            this.phones = PhoneDTO.getDTO(person.getPhones());        
+        if (person.getPhones() != null) {
+            this.phones = PhoneDTO.getDTO(person.getPhones());
         }
     }
 
@@ -101,5 +99,13 @@ public class PersonDTO {
 
     public void setPhones(List<PhoneDTO> phones) {
         this.phones = phones;
+    }
+
+    public void addPhone(PhoneDTO phoneDTO) {
+        this.phones.add(phoneDTO);
+    }
+
+    public void removePhone(PhoneDTO phoneDTO) {
+        this.phones.remove(phoneDTO);
     }
 }

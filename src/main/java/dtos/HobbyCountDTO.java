@@ -10,7 +10,7 @@ package dtos;
  * @author olive
  */
 public class HobbyCountDTO {
-    
+
     private long count;
 
     public HobbyCountDTO(long count) {
