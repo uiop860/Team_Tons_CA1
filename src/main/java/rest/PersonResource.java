@@ -31,6 +31,24 @@ public class PersonResource {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final PersonFacade FACADE = PersonFacade.getPersonFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public String getAllPersons() throws PersonNotFoundException{
+        
+        List<PersonDTO> personsDTO = null;
+ 
+        try {
+            personsDTO = FACADE.getAllPersons();
+        } catch (Exception e) {
+            throw new PersonNotFoundException("Error getting all persons");
+        }
+        if (personsDTO != null && !personsDTO.isEmpty()) {
+            return GSON.toJson(personsDTO);
+        } else {
+            throw new PersonNotFoundException("Error getting all persons");
+        }
+    }
 
     @GET
     @Path("{id}")
