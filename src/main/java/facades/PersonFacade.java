@@ -256,9 +256,7 @@ public class PersonFacade {
         return new PersonDTO(personToUpdate);
     }
     
-    public PersonDTO deletePerson(int id) {
-    
-    }
+    //public PersonDTO deletePerson(int id) {}
 
     public PersonDTO addPhoneToPerson(PhoneDTO phoneDTO, int personId) {
         EntityManager em = emf.createEntityManager();
