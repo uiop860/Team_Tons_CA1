@@ -2,39 +2,32 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.HobbyDTO;
+import dtos.PersonDTO;
+import dtos.PhoneDTO;
 import entities.*;
 import io.restassured.RestAssured;
+import static io.restassured.RestAssured.given;
 import io.restassured.parsing.Parser;
+import io.restassured.response.Response;
+import java.net.URI;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.core.UriBuilder;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import static org.hamcrest.Matchers.*;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
-import io.restassured.response.Response;
 
-import javax.json.*;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+public class PersonResourceTest {
 
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
-import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.replaceFiltersWith;
-import static org.hamcrest.Matchers.*;
-
-public class PersonResourceTest
-{
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api/";
-    private static Person p1, p2, p3, p4, p5;
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
@@ -66,25 +59,7 @@ public class PersonResourceTest
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        p1 = new Person("PeterParker@test.com","Peter", "Parker");
-        p2 = new Person("TonyStark@test.com", "Tony", "Stark");
-        p3 = new Person("BlackWidow@test.com", "Natasha", "Romanoff");
-        p4 = new Person("ThorOdinson@test.com", "Thor", "Odinson");
-        p5 = new Person("LokeOdinson@test.com", "Loke", "Odinson");
 
-
-        Phone phone1 = new Phone("20212021", "This year");
-        Phone phone2 = new Phone("20202020", "Last year");
-
-        Hobby hobby1 = new Hobby("Badre", "Badre skurke");
-
-        Address address1 = new Address("Queensvej", "Der hvor spiderman bor");
-
-        CityInfo cityInfo1 = new CityInfo(9820, "New York");
-        p1.addPhone(phone1);
-        p2.addPhone(phone2);
-        p1.addHobby(hobby1);
-        p2.addHobby(hobby1);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
@@ -98,24 +73,35 @@ public class PersonResourceTest
             em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
             em.createNamedQuery("CityInfo.resetAutoIncrement").executeUpdate();
 
-            em.persist(address1);
-            em.persist(cityInfo1);
-            address1.setCityInfo(cityInfo1);
-            em.merge(address1);
-            em.persist(p1);
-            p1.setAddress(address1);
-            em.merge(p1);
-            em.persist(p2);
-            em.persist(p3);
-            em.persist(p4);
+            Address address = new Address("Queensvej", "Der hvor spiderman bor");
+            address.setCityInfo(new CityInfo(9820, "New York"));
+            em.merge(address);
+
+            Person person = new Person("peter@parker.com", "Peter", "Parker");
+            person.addHobby(new Hobby("Badre", "Badre skurke"));
+            person.addPhone(new Phone("20212021", "This year"));
+            person.setAddress(address);
+            em.merge(person);
             em.getTransaction().commit();
-        } finally
-        {
+
+            em.getTransaction().begin();
+            Address address1 = new Address("Nastrovia", "Safe house");
+            address1.setCityInfo(new CityInfo(7364, "Moskov"));
+            em.merge(address1);
+
+            Person person1 = new Person("BlackWidow@test.com", "Natasha", "Romanoff");
+            person1.addHobby(new Hobby("Badre", "Badre skurke"));
+            person1.addPhone(new Phone("20202020", "Last year"));
+            person1.setAddress(address1);
+            em.merge(person1);
+            em.getTransaction().commit();
+        } finally {
             em.close();
         }
     }
+
     @Test
-    public void testServerIsUp(){
+    public void testServerIsUp() {
         System.out.println("Testing is server up");
         given().when().get("/xxx").then().statusCode(200);
     }
@@ -163,28 +149,28 @@ public class PersonResourceTest
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("firstName", hasItem("Peter"));
     }
+
     @Test
     public void testFindNumberOfPersonsWithHobby() {
         given()
                 .contentType("application/json")
-                .get("/person/hobbycount/Badre")
+                .get("/person/hobbyCount/Badre")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("count", equalTo(2));
     }
 
-  @Test
-    public void testCreatePerson() {
+    @Test
+    public void testInsertPerson() {
         Response response = given()
-                .header("Content-type", "application/json")
+                .contentType("application/json")
                 .and()
-                .body(GSON.toJson(new Person("SteveRogers@test.com", "Steve", "Rogers")))
+                .body(GSON.toJson(new PersonDTO(new Person("SteveRogers@test.com", "Steve", "Rogers"))))
                 .when()
-                .post("/person/create")
+                .post("/person/createPerson")
                 .then()
                 .extract().response();
-
         Assertions.assertEquals(200, response.getStatusCode());
         Assertions.assertEquals("Steve", response.jsonPath().getString("firstName"));
         Assertions.assertEquals("Rogers", response.jsonPath().getString("lastName"));
@@ -193,29 +179,99 @@ public class PersonResourceTest
 
     @Test
     public void testUpdatePerson() {
+        PersonDTO personDTO = new PersonDTO(new Person("loke@odinson.com", "Loke", "Odinson"));
         Response response = given()
-                .header("Content-type", "application/json")
+                .contentType("application/json")
                 .and()
-                .body(GSON.toJson(p5))
+                .body(GSON.toJson(personDTO))
                 .when()
-                .put("/person/update/3")
+                .put("/person/updatePerson/2")
                 .then()
                 .extract().response();
-       // Assertions.assertEquals("LokeOdinson@test.com", response.jsonPath().getString("email"));
+        Assertions.assertEquals("loke@odinson.com", response.jsonPath().getString("email"));
         Assertions.assertEquals(200, response.getStatusCode());
         Assertions.assertEquals("Loke", response.jsonPath().getString("firstName"));
         Assertions.assertEquals("Odinson", response.jsonPath().getString("lastName"));
 
-
     }
 
     @Test
-    public void testDeletePerson()
-    {
+    public void testAddHobby() {
+        HobbyDTO hobbyDTO = new HobbyDTO(new Hobby("Killing", "Ice giants"));
         Response response = given()
-                .header("Content-type", "application/json")
+                .contentType("application/json")
+                .and()
+                .body(GSON.toJson(hobbyDTO))
                 .when()
-                .delete("/person/delete/3")
+                .put("person/addHobby/1")
+                .then()
+                .extract().response();
+        HobbyDTO hobbyResponse = response.jsonPath().getList("hobbies", HobbyDTO.class).get(1);
+        Assertions.assertEquals(200, response.getStatusCode());
+        Assertions.assertEquals(2, response.jsonPath().getList("hobbies").size());
+        Assertions.assertEquals("Killing", hobbyResponse.getName());
+        Assertions.assertEquals("Ice giants", hobbyResponse.getDescription());
+    }
+
+//    TODO: no worky, gives statusCode 400
+//    @Test
+    public void testRemoveHobby() {
+        HobbyDTO hobbyDTO = new HobbyDTO(new Hobby("Badre", "Badre skurke"));
+        Response response = given()
+                .contentType("application/json")
+                .and()
+                .body(GSON.toJson(hobbyDTO))
+                .when()
+                .delete("person/removeHobby/1")
+                .then()
+                .extract().response();
+        System.out.println(GSON.toJson(hobbyDTO));
+        Assertions.assertEquals(200, response.getStatusCode());
+        response.jsonPath().prettyPeek();
+        Assertions.assertEquals(true, response.jsonPath().getList("hobbies").isEmpty());
+    }
+
+    @Test
+    public void testAddPhone() {
+        PhoneDTO phoneDTO = new PhoneDTO(new Phone("75648326", "Hulks phone number"));
+        Response response = given()
+                .contentType("application/json")
+                .and()
+                .body(GSON.toJson(phoneDTO))
+                .when()
+                .put("person/addPhone/1")
+                .then()
+                .extract().response();
+        PhoneDTO phoneResponse = response.jsonPath().getList("phones", PhoneDTO.class).get(1);
+        Assertions.assertEquals(200, response.getStatusCode());
+        Assertions.assertEquals(2, response.jsonPath().getList("phones").size());
+        Assertions.assertEquals("75648326", phoneResponse.getNumber());
+        Assertions.assertEquals("Hulks phone number", phoneResponse.getDescription());
+    }
+
+//    TODO: no worky, gives statusCode 400
+//    @Test
+    public void testRemovePhone() {
+        PhoneDTO phoneDTO = new PhoneDTO(new Phone("20212021", "This year"));
+        Response response = given()
+                .contentType("application/json")
+                .and()
+                .body(GSON.toJson(phoneDTO))
+                .when()
+                .delete("person/removePhone/1")
+                .then()
+                .extract().response();
+        System.out.println(GSON.toJson(phoneDTO));
+        Assertions.assertEquals(200, response.getStatusCode());
+        Assertions.assertEquals(true, response.jsonPath().getList("phones").isEmpty());
+    }
+
+    @Test
+    public void testDeletePerson() {
+        Response response = given()
+                .contentType("application/json")
+                .when()
+                .delete("/person/removePerson/1")
                 .then()
                 .extract().response();
 

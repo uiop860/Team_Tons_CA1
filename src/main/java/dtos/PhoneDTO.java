@@ -5,7 +5,6 @@
  */
 package dtos;
 
-import entities.Person;
 import entities.Phone;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +14,19 @@ import java.util.List;
  * @author olive
  */
 public class PhoneDTO {
-    
+
     private String number;
     private String description;
 
-    public PhoneDTO() {}
-    
-    public PhoneDTO(Phone phone){
+    public PhoneDTO() {
+    }
+
+    public PhoneDTO(Phone phone) {
         this.number = phone.getNumber();
         this.description = phone.getDescription();
     }
-    
-    public static List<PhoneDTO> getDTO(List<Phone> phones){
+
+    public static List<PhoneDTO> getDTO(List<Phone> phones) {
         List<PhoneDTO> phonesDTO = new ArrayList<>();
         phones.forEach(x -> phonesDTO.add(new PhoneDTO(x)));
         return phonesDTO;

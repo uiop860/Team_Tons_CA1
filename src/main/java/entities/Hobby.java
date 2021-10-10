@@ -28,8 +28,9 @@ public class Hobby implements Serializable {
 
     @ManyToMany()
     private List<Person> persons;
-    
-    public Hobby() {}
+
+    public Hobby() {
+    }
 
     public Hobby(String name, String description) {
         this.name = name;

@@ -27,14 +27,15 @@ public class Phone implements Serializable {
     @ManyToOne
     private Person person;
 
-    public Phone() {}
-    
+    public Phone() {
+    }
+
     public Phone(String number, String description) {
         this.number = number;
         this.description = description;
         this.person = null;
     }
-    
+
     public Person getPerson() {
         return person;
     }

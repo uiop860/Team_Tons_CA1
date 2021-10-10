@@ -5,7 +5,8 @@
  */
 package entities;
 
-import dtos.PersonDTO;
+import dtos.HobbyDTO;
+import dtos.PhoneDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class Person implements Serializable {
     private String firstName;
     private String lastName;
 
-    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Phone> phones;
 
     @ManyToOne
@@ -36,8 +37,9 @@ public class Person implements Serializable {
 
     @ManyToMany(mappedBy = "persons", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<Hobby> hobbies;
-    
-    public Person() {}
+
+    public Person() {
+    }
 
     public Person(String email, String firstName, String lastName) {
         this.email = email;
@@ -46,8 +48,8 @@ public class Person implements Serializable {
         this.phones = new ArrayList<>();
         this.hobbies = new ArrayList<>();
         this.address = null;
-    }    
-    
+    }
+
     public void addHobby(Hobby hobby) {
         if (hobby != null) {
             this.hobbies.add(hobby);
@@ -63,39 +65,53 @@ public class Person implements Serializable {
             });
         }
     }
-    
-    public Hobby removeHobby(Hobby hobby){
+
+    public Hobby removeHobby(HobbyDTO hobbyDTO) {
         Hobby hobbyToRemove = null;
-        if(hobby != null){
-            for(Hobby h: this.hobbies){           
-                if(h.getName().equals(hobby.getName()) && h.getDescription().equals(hobby.getDescription())){
+        if (hobbyDTO != null) {
+            for (Hobby h : this.hobbies) {
+                if (h.getName().equals(hobbyDTO.getName()) && h.getDescription().equals(hobbyDTO.getDescription())) {
                     hobbyToRemove = h;
                 }
             }
-            if(hobbyToRemove != null){
+            if (hobbyToRemove != null) {
                 this.hobbies.remove(hobbyToRemove);
             }
-            hobby.setPersons(null);
         }
         return hobbyToRemove;
     }
-    
-    public void removePhones(List<Phone> phones){
-        if(phones != null){
+
+    public void removePhones(List<Phone> phones) {
+        if (phones != null) {
             this.phones = new ArrayList<>();
-            phones.forEach((t) ->{
+            phones.forEach((t) -> {
                 t.setPerson(null);
             });
         }
     }
-    
+
+    public Phone removePhone(PhoneDTO phoneDTO) {
+        Phone phoneToRemove = null;
+        if (phoneDTO != null) {
+            for (Phone p : this.phones) {
+                if (p.getNumber().equals(phoneDTO.getNumber()) && p.getDescription().equals(phoneDTO.getDescription())) {
+                    phoneToRemove = p;
+                }
+            }
+            if (phoneToRemove != null) {
+                this.phones.remove(phoneToRemove);
+            }
+        }
+        return phoneToRemove;
+    }
+
     public void addPhone(Phone phone) {
         this.phones.add(phone);
         if (phone != null) {
             phone.setPerson(this);
         }
     }
-    
+
     public List<Phone> getPhones() {
         return phones;
     }

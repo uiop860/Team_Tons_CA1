@@ -9,6 +9,8 @@ import dtos.CityInfoDTO;
 import dtos.HobbyCountDTO;
 import dtos.HobbyDTO;
 import dtos.PersonDTO;
+import dtos.PhoneDTO;
+import entities.Address;
 import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
@@ -40,9 +42,20 @@ public class PersonFacade {
         if (instance == null) {
             emf = _emf;
             instance = new PersonFacade();
-//            Populator.populate();
         }
         return instance;
+    }
+    
+    public List<PersonDTO> getAllPersons(){
+        EntityManager em = emf.createEntityManager();
+        List<Person> persons;
+        try{
+            TypedQuery<Person> tq = em.createQuery("SELECT p FROM Person p", Person.class);
+            persons = tq.getResultList();
+        }finally{
+            em.close();
+        }
+        return PersonDTO.getDTO(persons);
     }
 
     public PersonDTO getPersonByPhone(String number) {
@@ -112,27 +125,57 @@ public class PersonFacade {
 
     public PersonDTO getPersonByID(int id) {
         EntityManager em = emf.createEntityManager();
-        PersonDTO person;
+        Person person;
         try {
             em.getTransaction().begin();
-            person = new PersonDTO(em.find(Person.class, id));
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
-        return person;
-    }
-
-    public PersonDTO insertPerson(Person person) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.persist(person);
+            person = em.find(Person.class, id);
             em.getTransaction().commit();
         } finally {
             em.close();
         }
         return new PersonDTO(person);
+    }
+
+    public PersonDTO insertPerson(PersonDTO personDTO) {
+        EntityManager em = emf.createEntityManager();
+        Person personToInsert = null;
+        boolean addresUpdated = false;
+        try {
+            em.getTransaction().begin();
+            Address address = null;
+            if (personDTO.getAddress() != null) {
+                address = new Address(personDTO.getAddress().getStreet(), personDTO.getAddress().getAdditionalInfo());
+                addresUpdated = true;
+                if (personDTO.getAddress().getCityInfo() != null) {
+                    address.setCityInfo(new CityInfo(personDTO.getAddress().getCityInfo().getZipCode(), personDTO.getAddress().getCityInfo().getCity()));
+                    em.merge(address);
+                }
+                if (personDTO.getAddress().getCityInfo() == null) {
+                    em.merge(address);
+                }
+            }
+            if (personDTO.getEmail() != null && personDTO.getFirstName() != null && personDTO.getLastName() != null) {
+                personToInsert = new Person(personDTO.getEmail(), personDTO.getFirstName(), personDTO.getLastName());
+                if (personDTO.getHobbies() != null) {
+                    for (HobbyDTO h : personDTO.getHobbies()) {
+                        personToInsert.addHobby(new Hobby(h.getName(), h.getDescription()));
+                    }
+                }
+                if (personDTO.getPhones() != null) {
+                    for (PhoneDTO h : personDTO.getPhones()) {
+                        personToInsert.addPhone(new Phone(h.getNumber(), h.getDescription()));
+                    }
+                }
+            }
+            if (addresUpdated && address != null) {
+                personToInsert.setAddress(address);
+            }
+            em.merge(personToInsert);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        return new PersonDTO(personToInsert);
     }
 
     public PersonDTO updatePerson(PersonDTO personDTO, int id) {
@@ -140,54 +183,52 @@ public class PersonFacade {
         Person personToUpdate;
         try {
             em.getTransaction().begin();
-            
+
             personToUpdate = em.find(Person.class, id);
-            
-            if(personDTO.getFirstName() != null){
+
+            if (personDTO.getFirstName() != null) {
                 personToUpdate.setFirstName(personDTO.getFirstName());
             }
-            
-            if(personDTO.getLastName() != null){
+            if (personDTO.getLastName() != null) {
                 personToUpdate.setLastName(personDTO.getLastName());
             }
-            
-            if(personDTO.getAddress() != null){
-                if(personDTO.getAddress().getAdditionalInfo() != null){
+            if (personDTO.getEmail() != null) {
+                personToUpdate.setEmail(personDTO.getEmail());
+            }
+            if (personDTO.getAddress() != null) {
+                if (personDTO.getAddress().getAdditionalInfo() != null) {
                     personToUpdate.getAddress().setAdditionalInfo(personDTO.getAddress().getAdditionalInfo());
                 }
-                if(personDTO.getAddress().getCityInfo() != null){
+                if (personDTO.getAddress().getCityInfo() != null) {
                     personToUpdate.getAddress().setStreet(personDTO.getAddress().getStreet());
                 }
-                if(personDTO.getAddress().getCityInfo() != null){
-                    if(personDTO.getAddress().getCityInfo().getCity() != null){
+                if (personDTO.getAddress().getCityInfo() != null) {
+                    if (personDTO.getAddress().getCityInfo().getCity() != null) {
                         personToUpdate.getAddress().getCityInfo().setCity(personDTO.getAddress().getCityInfo().getCity());
                     }
-                    if(personDTO.getAddress().getCityInfo().getZipCode() != 0){
+                    if (personDTO.getAddress().getCityInfo().getZipCode() != 0) {
                         personToUpdate.getAddress().getCityInfo().setZipCode(personDTO.getAddress().getCityInfo().getZipCode());
                     }
                 }
             }
-            
-            if(personDTO.getHobbies() != null){
+            if (personDTO.getHobbies() != null) {
                 personToUpdate.getHobbies().forEach((t) -> {
                     em.remove(t);
                 });
                 personToUpdate.removeHobbies(personToUpdate.getHobbies());
                 personDTO.getHobbies().forEach((t) -> {
-                    personToUpdate.addHobby(new Hobby(t.getName(),t.getDescription()));
+                    personToUpdate.addHobby(new Hobby(t.getName(), t.getDescription()));
                 });
             }
-            
-            if(personDTO.getPhones() != null ){
-                personToUpdate.getPhones().forEach((t) ->{
+            if (personDTO.getPhones() != null) {
+                personToUpdate.getPhones().forEach((t) -> {
                     em.remove(t);
                 });
                 personToUpdate.removePhones(personToUpdate.getPhones());
-                personDTO.getPhones().forEach((t) ->{
-                    personToUpdate.addPhone(new Phone(t.getNumber(),t.getDescription()));
+                personDTO.getPhones().forEach((t) -> {
+                    personToUpdate.addPhone(new Phone(t.getNumber(), t.getDescription()));
                 });
             }
-            
             em.merge(personToUpdate);
             em.getTransaction().commit();
         } finally {
@@ -195,46 +236,91 @@ public class PersonFacade {
         }
         return new PersonDTO(personToUpdate);
     }
-    
-    public PersonDTO addHobbyToPerson(HobbyDTO hobbyDTO, int id){
+
+    public PersonDTO addHobbyToPerson(HobbyDTO hobbyDTO, int id) {
         EntityManager em = emf.createEntityManager();
         Person personToUpdate;
-        Hobby hobbyToAdd;
-        try{
+        try {
             em.getTransaction().begin();
             personToUpdate = em.find(Person.class, id);
-            hobbyToAdd = new Hobby(hobbyDTO.getName(), hobbyDTO.getDescription());
-            personToUpdate.addHobby(hobbyToAdd);
+            personToUpdate.addHobby(new Hobby(hobbyDTO.getName(), hobbyDTO.getDescription()));
             em.merge(personToUpdate);
             em.getTransaction().commit();
-        }finally{
-            em.close();
-        }
-        return new PersonDTO(personToUpdate);
-    }
-    
-    public PersonDTO removeHobbyFromPerson(HobbyDTO hobbyDTO, int id) {
-        EntityManager em = emf.createEntityManager();
-        Person personToUpdate;
-        try{
-            em.getTransaction().begin();
-            personToUpdate = em.find(Person.class, id);
-            Hobby hobbyToRemove = personToUpdate.removeHobby(new Hobby(hobbyDTO.getName(),hobbyDTO.getDescription()));
-            em.remove(hobbyToRemove);
-            em.merge(personToUpdate);
-            em.getTransaction().commit();
-        }finally{
+        } finally {
             em.close();
         }
         return new PersonDTO(personToUpdate);
     }
 
-    public PersonDTO deletePerson(int id) {
+    public PersonDTO removeHobbyFromPerson(HobbyDTO hobbyDTO, int id) {
+        EntityManager em = emf.createEntityManager();
+        Person personToUpdate;
+        try {
+            em.getTransaction().begin();
+            personToUpdate = em.find(Person.class, id);
+            Hobby hobbyToRemove = personToUpdate.removeHobby(hobbyDTO);
+            em.remove(hobbyToRemove);
+            em.merge(personToUpdate);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        return new PersonDTO(personToUpdate);
+    }
+
+    public PersonDTO addPhoneToPerson(PhoneDTO phoneDTO, int personId) {
+        EntityManager em = emf.createEntityManager();
+        Person personToUpdate;
+        try {
+            em.getTransaction().begin();
+            personToUpdate = em.find(Person.class, personId);
+            personToUpdate.addPhone(new Phone(phoneDTO.getNumber(), phoneDTO.getDescription()));
+            em.merge(personToUpdate);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        return new PersonDTO(personToUpdate);
+    }
+
+    public PersonDTO removePhoneFromPerson(PhoneDTO phoneDTO, int id) {
+        EntityManager em = emf.createEntityManager();
+        Person personToUpdate;
+        try {
+            em.getTransaction().begin();
+            personToUpdate = em.find(Person.class, id);
+            Phone phoneToRemove = personToUpdate.removePhone(phoneDTO);
+            em.remove(phoneToRemove);
+            em.merge(personToUpdate);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        return new PersonDTO(personToUpdate);
+    }
+
+    public PersonDTO removePerson(int id) {
         EntityManager em = emf.createEntityManager();
         Person person;
         try {
             em.getTransaction().begin();
             person = em.find(Person.class, id);
+            if (person.getPhones() != null) {
+                person.getPhones().forEach((t) -> {
+                    em.remove(t);
+                });
+            }
+            if (person.getAddress() != null) {
+                em.remove(person.getAddress());
+                if (person.getAddress().getCityInfo() != null) {
+                    em.remove(person.getAddress().getCityInfo());
+                }
+            }
+            if (person.getHobbies() != null) {
+                person.getHobbies().forEach((t) -> {
+                    em.remove(t);
+                });
+            }
             em.remove(person);
             em.getTransaction().commit();
         } finally {
@@ -242,5 +328,4 @@ public class PersonFacade {
         }
         return new PersonDTO(person);
     }
-
 }

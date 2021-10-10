@@ -13,10 +13,16 @@ public class ExceptionDTO {
 
     private int code;
     private String message;
+    private Object sentBody;
 
-    public ExceptionDTO(int code, String description) {
+    public ExceptionDTO(int code, String message, Object sentBody) {
         this.code = code;
-        this.message = description;
+        this.message = message;
+        this.sentBody = sentBody;
     }
 
+    public ExceptionDTO(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 }

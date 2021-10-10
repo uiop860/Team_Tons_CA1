@@ -6,9 +6,7 @@ import dtos.HobbyCountDTO;
 import dtos.HobbyDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
-import entities.Person;
-import facades.PhoneFacade;
-import utils.EMF_Creator;
+import exceptions.PersonNotFoundException;
 import facades.PersonFacade;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
@@ -21,6 +19,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import utils.EMF_Creator;
 
 /**
  *
@@ -31,8 +30,25 @@ public class PersonResource {
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final PersonFacade FACADE = PersonFacade.getPersonFacade(EMF);
-    private static final PhoneFacade PHONE_FACADE = PhoneFacade.getPhoneFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public String getAllPersons() throws PersonNotFoundException{
+        
+        List<PersonDTO> personsDTO = null;
+ 
+        try {
+            personsDTO = FACADE.getAllPersons();
+        } catch (Exception e) {
+            throw new PersonNotFoundException("Error getting all persons");
+        }
+        if (personsDTO != null && !personsDTO.isEmpty()) {
+            return GSON.toJson(personsDTO);
+        } else {
+            throw new PersonNotFoundException("Error getting all persons");
+        }
+    }
 
     @GET
     @Path("{id}")
@@ -41,103 +57,263 @@ public class PersonResource {
         return GSON.toJson(FACADE.getPersonByID(id));
     }
 
-    //This should return a user with a given phone number
     @GET
     @Path("phone/{phone}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String userByPhone(@PathParam("phone") String phone) {
+    public String getPersonByPhone(@PathParam("phone") String phone) throws PersonNotFoundException {
 
-        PersonDTO person = FACADE.getPersonByPhone(phone);
+        PersonDTO personDTO = null;
 
-        if (person != null) {
-            return GSON.toJson(person);
+        if (phone != null) {
+            try {
+                personDTO = FACADE.getPersonByPhone(phone);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Person not found on phone number", phone);
+            }
         } else {
-            return "{\"msg\":\"No one with this phone number could be found.\"}";
+            throw new PersonNotFoundException("Missing phone number");
+        }
+        if (personDTO != null) {
+            return GSON.toJson(personDTO);
+        } else {
+            throw new PersonNotFoundException("Person not found on phone number", phone);
         }
     }
 
-    //This should return a list of users with a given hobby
     @GET
     @Path("hobby/{hobby}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String userByHobby(@PathParam("hobby") String hobby) {
+    public String getPersonByHobby(@PathParam("hobby") String hobby) throws PersonNotFoundException {
 
-        List<PersonDTO> personsHobby = FACADE.getPersonsByHobby(hobby);
+        List<PersonDTO> personsDTO = null;
 
-        if (personsHobby != null) {
-            return GSON.toJson(personsHobby);
+        if (hobby != null) {
+            try {
+                personsDTO = FACADE.getPersonsByHobby(hobby);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Person not found on hobby", hobby);
+            }
         } else {
-            return "{\"msg\":\"You need to specify a hobby.\"}";
+            throw new PersonNotFoundException("Missing hobby");
+        }
+        if (personsDTO != null && !personsDTO.isEmpty()) {
+            return GSON.toJson(personsDTO);
+        } else {
+            throw new PersonNotFoundException("Person not found on hobby", hobby);
         }
     }
 
-    //This should return a list of users living in a given city
     @GET
     @Path("city/{city}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String getPersonsByCity(@PathParam("city") String city) {
-        List<PersonDTO> personsCity = FACADE.getPersonsByCity(city);
+    public String getPersonsByCity(@PathParam("city") String city) throws PersonNotFoundException {
 
-        if (personsCity != null) {
-            return GSON.toJson(personsCity);
+        List<PersonDTO> personsDTO = null;
+
+        if (city != null) {
+            try {
+                personsDTO = FACADE.getPersonsByCity(city);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Persons not found on city", city);
+            }
         } else {
-            return "{\"msg\":\"You need to specify a city.\"}";
+            throw new PersonNotFoundException("Missing city");
+        }
+        if (personsDTO != null && !personsDTO.isEmpty()) {
+            return GSON.toJson(personsDTO);
+        } else {
+            throw new PersonNotFoundException("Persons not found on city", city);
         }
     }
 
     @GET
-    @Path("hobbycount/{hobby}")
+    @Path("hobbyCount/{hobby}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String hobbyCount(@PathParam("hobby") String hobby) {
+    public String getHobbyCount(@PathParam("hobby") String hobby) throws PersonNotFoundException {
 
-        HobbyCountDTO hobbyCount = FACADE.getNumberOfPersonsByHobby(hobby);
+        HobbyCountDTO hobbyCountDTO = null;
 
-        if (hobbyCount != null) {
-            return GSON.toJson(hobbyCount);
+        if (hobby != null) {
+            try {
+                hobbyCountDTO = FACADE.getNumberOfPersonsByHobby(hobby);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Count not found on hobby", hobby);
+            }
         } else {
-            return "{\"msg\":\"No one has this hobby.\"}";
+            throw new PersonNotFoundException("Missing hobby");
+        }
+        if (hobbyCountDTO != null && hobbyCountDTO.getCount() != 0) {
+            return GSON.toJson(hobbyCountDTO);
+        } else {
+            throw new PersonNotFoundException("Count not found on hobby", hobby);
         }
     }
 
     @POST
-    @Path("create")
+    @Path("createPerson")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String createPerson(Person person) {
-        return GSON.toJson(FACADE.insertPerson(person));
+    public String insertPerson(PersonDTO personDTO) throws PersonNotFoundException {
+
+        PersonDTO personResponseDTO = null;
+
+        if (personDTO != null) {
+            try {
+                personResponseDTO = FACADE.insertPerson(personDTO);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Person could not be inserted", personDTO);
+            }
+        } else {
+            throw new PersonNotFoundException("Missing person");
+        }
+        if (personResponseDTO != null) {
+            return GSON.toJson(personResponseDTO);
+        } else {
+            throw new PersonNotFoundException("Person could not be inserted", personDTO);
+        }
     }
 
     @PUT
-    @Path("update/{id}")
+    @Path("updatePerson/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String updateSinglePerson(@PathParam("id") int id, PersonDTO personDTO) {
-        return GSON.toJson(FACADE.updatePerson(personDTO, id));
+    public String updatePerson(@PathParam("id") int id, PersonDTO personDTO) throws PersonNotFoundException {
+
+        PersonDTO personResponseDTO = null;
+
+        if (personDTO != null && id != 0) {
+            try {
+                personResponseDTO = FACADE.updatePerson(personDTO, id);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Person could not be updated", personDTO);
+            }
+        } else {
+            throw new PersonNotFoundException("Missing person or id");
+        }
+        if (personResponseDTO != null) {
+            return GSON.toJson(personResponseDTO);
+        } else {
+            throw new PersonNotFoundException("Person could not be updated", personDTO);
+        }
     }
-    
+
     @PUT
     @Path("addHobby/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String addHobby(@PathParam("id") int id, HobbyDTO hobbyDTO){
-        return GSON.toJson(FACADE.addHobbyToPerson(hobbyDTO, id));
+    public String addHobbyToPerson(@PathParam("id") int id, HobbyDTO hobbyDTO) throws PersonNotFoundException {
+
+        PersonDTO personResponseDTO = null;
+
+        if (hobbyDTO != null && id != 0) {
+            try {
+                personResponseDTO = FACADE.addHobbyToPerson(hobbyDTO, id);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Hobby could not be added", hobbyDTO);
+            }
+        } else {
+            throw new PersonNotFoundException("Missing hobby or id");
+        }
+        if (personResponseDTO != null) {
+            return GSON.toJson(personResponseDTO);
+        } else {
+            throw new PersonNotFoundException("Hobby could not be added", hobbyDTO);
+        }
     }
-    
+
     @PUT
-    @Path("removeHobby/{id}")
+    @Path("addPhone/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String removeHobby(@PathParam("id") int id, HobbyDTO hobbyDTO){
-        return GSON.toJson(FACADE.removeHobbyFromPerson(hobbyDTO,id));
+    public String addPhoneToPerson(@PathParam("id") int id, PhoneDTO phoneDTO) throws PersonNotFoundException {
+
+        PersonDTO personResponseDTO = null;
+
+        if (phoneDTO != null && id != 0) {
+            try {
+                personResponseDTO = FACADE.addPhoneToPerson(phoneDTO, id);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Phone could not be added", phoneDTO);
+            }
+        } else {
+            throw new PersonNotFoundException("Missing phone or id");
+        }
+        if (personResponseDTO != null) {
+            return GSON.toJson(personResponseDTO);
+        } else {
+            throw new PersonNotFoundException("Phone could not be added", phoneDTO);
+        }
     }
 
     @DELETE
-    @Path("delete/{personId}")
+    @Path("removeHobby/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String deleteSinglePerson(@PathParam("personId") int personId) {
-        return GSON.toJson(FACADE.deletePerson(personId));
+    public String removeHobbyFromPerson(@PathParam("id") int id, HobbyDTO hobbyDTO) throws PersonNotFoundException {
+
+        PersonDTO personResponseDTO = null;
+
+        if (hobbyDTO != null && id != 0) {
+            try {
+                personResponseDTO = FACADE.removeHobbyFromPerson(hobbyDTO, id);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Hobby could not be removed", hobbyDTO);
+            }
+        } else {
+            throw new PersonNotFoundException("Missing hobby or id");
+        }
+        if (personResponseDTO != null) {
+            return GSON.toJson(personResponseDTO);
+        } else {
+            throw new PersonNotFoundException("Hobby could not be removed", hobbyDTO);
+        }
     }
 
+    @DELETE
+    @Path("removePhone/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String removePhoneFromPerson(@PathParam("id") int id, PhoneDTO phoneDTO) throws PersonNotFoundException {
 
+        PersonDTO personResponseDTO = null;
+
+        if (phoneDTO != null && id != 0) {
+            try {
+                personResponseDTO = FACADE.removePhoneFromPerson(phoneDTO, id);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Phone could not be removed", phoneDTO);
+            }
+        } else {
+            throw new PersonNotFoundException("Missing phone or id");
+        }
+        if (personResponseDTO != null) {
+            return GSON.toJson(personResponseDTO);
+        } else {
+            throw new PersonNotFoundException("Phone could not be removed", phoneDTO);
+        }
+    }
+
+    @DELETE
+    @Path("removePerson/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String removePerson(@PathParam("id") int id) throws PersonNotFoundException {
+
+        PersonDTO personResponseDTO = null;
+
+        if (id != 0) {
+            try {
+                personResponseDTO = FACADE.removePerson(id);
+            } catch (Exception e) {
+                throw new PersonNotFoundException("Person could not be removed", id);
+            }
+        } else {
+            throw new PersonNotFoundException("Missing id");
+        }
+        if (personResponseDTO != null) {
+            return GSON.toJson(personResponseDTO);
+        } else {
+            throw new PersonNotFoundException("Person could not be removed", id);
+        }
+    }
 }
