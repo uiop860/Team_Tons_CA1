@@ -8,6 +8,7 @@ import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import exceptions.PersonNotFoundException;
 import facades.PersonFacade;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
@@ -159,7 +160,9 @@ public class PersonResource {
 
         if (personDTO != null) {
             try {
+                System.out.println(personDTO.toString());
                 personResponseDTO = FACADE.insertPerson(personDTO);
+//                return GSON.toJson(personResponseDTO);
             } catch (Exception e) {
                 throw new PersonNotFoundException("Person could not be inserted", personDTO);
             }
@@ -169,7 +172,7 @@ public class PersonResource {
         if (personResponseDTO != null) {
             return GSON.toJson(personResponseDTO);
         } else {
-            throw new PersonNotFoundException("Person could not be inserted", personDTO);
+            throw new PersonNotFoundException("Person could not be inserted test", personDTO);
         }
     }
 

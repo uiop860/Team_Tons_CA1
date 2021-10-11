@@ -100,181 +100,181 @@ public class PersonResourceTest {
         }
     }
 
-    @Test
-    public void testServerIsUp() {
-        System.out.println("Testing is server up");
-        given().when().get("/xxx").then().statusCode(200);
-    }
-
-    @Test
-    public void testDummyMsg() throws Exception {
-        given()
-                .contentType("application/json")
-                .get("/xxx/")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("msg", equalTo("Hello World"));
-    }
-
-    @Test
-    public void testFindPersonByPhone() {
-        given()
-                .contentType("application/json")
-                .get("/person/phone/20212021")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("firstName", equalTo("Peter"));
-    }
-
-    @Test
-    public void testFindPersonsByHobby() {
-        given()
-                .contentType("application/json")
-                .get("/person/hobby/badre")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("persons", hasSize(2));
-    }
-
-    @Test
-    public void testFindpersonsByCity() {
-        given()
-                .contentType("application/json")
-                .get("/person/city/New York")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("firstName", hasItem("Peter"));
-    }
-
-    @Test
-    public void testFindNumberOfPersonsWithHobby() {
-        given()
-                .contentType("application/json")
-                .get("/person/hobbyCount/Badre")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("count", equalTo(2));
-    }
-
-    @Test
-    public void testInsertPerson() {
-        Response response = given()
-                .contentType("application/json")
-                .and()
-                .body(GSON.toJson(new PersonDTO(new Person("SteveRogers@test.com", "Steve", "Rogers"))))
-                .when()
-                .post("/person/createPerson")
-                .then()
-                .extract().response();
-        Assertions.assertEquals(200, response.getStatusCode());
-        Assertions.assertEquals("Steve", response.jsonPath().getString("firstName"));
-        Assertions.assertEquals("Rogers", response.jsonPath().getString("lastName"));
-        Assertions.assertEquals("SteveRogers@test.com", response.jsonPath().getString("email"));
-    }
-
-    @Test
-    public void testUpdatePerson() {
-        PersonDTO personDTO = new PersonDTO(new Person("loke@odinson.com", "Loke", "Odinson"));
-        Response response = given()
-                .contentType("application/json")
-                .and()
-                .body(GSON.toJson(personDTO))
-                .when()
-                .put("/person/updatePerson/2")
-                .then()
-                .extract().response();
-        Assertions.assertEquals("loke@odinson.com", response.jsonPath().getString("email"));
-        Assertions.assertEquals(200, response.getStatusCode());
-        Assertions.assertEquals("Loke", response.jsonPath().getString("firstName"));
-        Assertions.assertEquals("Odinson", response.jsonPath().getString("lastName"));
-
-    }
-
-    @Test
-    public void testAddHobby() {
-        HobbyDTO hobbyDTO = new HobbyDTO(new Hobby("Killing", "Ice giants"));
-        Response response = given()
-                .contentType("application/json")
-                .and()
-                .body(GSON.toJson(hobbyDTO))
-                .when()
-                .put("person/addHobby/1")
-                .then()
-                .extract().response();
-        HobbyDTO hobbyResponse = response.jsonPath().getList("hobbies", HobbyDTO.class).get(1);
-        Assertions.assertEquals(200, response.getStatusCode());
-        Assertions.assertEquals(2, response.jsonPath().getList("hobbies").size());
-        Assertions.assertEquals("Killing", hobbyResponse.getName());
-        Assertions.assertEquals("Ice giants", hobbyResponse.getDescription());
-    }
-
-//    TODO: no worky, gives statusCode 400
 //    @Test
-    public void testRemoveHobby() {
-        HobbyDTO hobbyDTO = new HobbyDTO(new Hobby("Badre", "Badre skurke"));
-        Response response = given()
-                .contentType("application/json")
-                .and()
-                .body(GSON.toJson(hobbyDTO))
-                .when()
-                .delete("person/removeHobby/1")
-                .then()
-                .extract().response();
-        System.out.println(GSON.toJson(hobbyDTO));
-        Assertions.assertEquals(200, response.getStatusCode());
-        response.jsonPath().prettyPeek();
-        Assertions.assertEquals(true, response.jsonPath().getList("hobbies").isEmpty());
-    }
-
-    @Test
-    public void testAddPhone() {
-        PhoneDTO phoneDTO = new PhoneDTO(new Phone("75648326", "Hulks phone number"));
-        Response response = given()
-                .contentType("application/json")
-                .and()
-                .body(GSON.toJson(phoneDTO))
-                .when()
-                .put("person/addPhone/1")
-                .then()
-                .extract().response();
-        PhoneDTO phoneResponse = response.jsonPath().getList("phones", PhoneDTO.class).get(1);
-        Assertions.assertEquals(200, response.getStatusCode());
-        Assertions.assertEquals(2, response.jsonPath().getList("phones").size());
-        Assertions.assertEquals("75648326", phoneResponse.getNumber());
-        Assertions.assertEquals("Hulks phone number", phoneResponse.getDescription());
-    }
-
-//    TODO: no worky, gives statusCode 400
+//    public void testServerIsUp() {
+//        System.out.println("Testing is server up");
+//        given().when().get("/xxx").then().statusCode(200);
+//    }
+//
 //    @Test
-    public void testRemovePhone() {
-        PhoneDTO phoneDTO = new PhoneDTO(new Phone("20212021", "This year"));
-        Response response = given()
-                .contentType("application/json")
-                .and()
-                .body(GSON.toJson(phoneDTO))
-                .when()
-                .delete("person/removePhone/1")
-                .then()
-                .extract().response();
-        System.out.println(GSON.toJson(phoneDTO));
-        Assertions.assertEquals(200, response.getStatusCode());
-        Assertions.assertEquals(true, response.jsonPath().getList("phones").isEmpty());
-    }
-
-    @Test
-    public void testDeletePerson() {
-        Response response = given()
-                .contentType("application/json")
-                .when()
-                .delete("/person/removePerson/1")
-                .then()
-                .extract().response();
-
-        Assertions.assertEquals(200, response.getStatusCode());
-    }
+//    public void testDummyMsg() throws Exception {
+//        given()
+//                .contentType("application/json")
+//                .get("/xxx/")
+//                .then()
+//                .assertThat()
+//                .statusCode(HttpStatus.OK_200.getStatusCode())
+//                .body("msg", equalTo("Hello World"));
+//    }
+//
+//    @Test
+//    public void testFindPersonByPhone() {
+//        given()
+//                .contentType("application/json")
+//                .get("/person/phone/20212021")
+//                .then()
+//                .assertThat()
+//                .statusCode(HttpStatus.OK_200.getStatusCode())
+//                .body("firstName", equalTo("Peter"));
+//    }
+//
+//    @Test
+//    public void testFindPersonsByHobby() {
+//        given()
+//                .contentType("application/json")
+//                .get("/person/hobby/badre")
+//                .then()
+//                .assertThat()
+//                .statusCode(HttpStatus.OK_200.getStatusCode())
+//                .body("persons", hasSize(2));
+//    }
+//
+//    @Test
+//    public void testFindpersonsByCity() {
+//        given()
+//                .contentType("application/json")
+//                .get("/person/city/New York")
+//                .then()
+//                .assertThat()
+//                .statusCode(HttpStatus.OK_200.getStatusCode())
+//                .body("firstName", hasItem("Peter"));
+//    }
+//
+//    @Test
+//    public void testFindNumberOfPersonsWithHobby() {
+//        given()
+//                .contentType("application/json")
+//                .get("/person/hobbyCount/Badre")
+//                .then()
+//                .assertThat()
+//                .statusCode(HttpStatus.OK_200.getStatusCode())
+//                .body("count", equalTo(2));
+//    }
+//
+//    @Test
+//    public void testInsertPerson() {
+//        Response response = given()
+//                .contentType("application/json")
+//                .and()
+//                .body(GSON.toJson(new PersonDTO(new Person("SteveRogers@test.com", "Steve", "Rogers"))))
+//                .when()
+//                .post("/person/createPerson")
+//                .then()
+//                .extract().response();
+//        Assertions.assertEquals(200, response.getStatusCode());
+//        Assertions.assertEquals("Steve", response.jsonPath().getString("firstName"));
+//        Assertions.assertEquals("Rogers", response.jsonPath().getString("lastName"));
+//        Assertions.assertEquals("SteveRogers@test.com", response.jsonPath().getString("email"));
+//    }
+//
+//    @Test
+//    public void testUpdatePerson() {
+//        PersonDTO personDTO = new PersonDTO(new Person("loke@odinson.com", "Loke", "Odinson"));
+//        Response response = given()
+//                .contentType("application/json")
+//                .and()
+//                .body(GSON.toJson(personDTO))
+//                .when()
+//                .put("/person/updatePerson/2")
+//                .then()
+//                .extract().response();
+//        Assertions.assertEquals("loke@odinson.com", response.jsonPath().getString("email"));
+//        Assertions.assertEquals(200, response.getStatusCode());
+//        Assertions.assertEquals("Loke", response.jsonPath().getString("firstName"));
+//        Assertions.assertEquals("Odinson", response.jsonPath().getString("lastName"));
+//
+//    }
+//
+//    @Test
+//    public void testAddHobby() {
+//        HobbyDTO hobbyDTO = new HobbyDTO(new Hobby("Killing", "Ice giants"));
+//        Response response = given()
+//                .contentType("application/json")
+//                .and()
+//                .body(GSON.toJson(hobbyDTO))
+//                .when()
+//                .put("person/addHobby/1")
+//                .then()
+//                .extract().response();
+//        HobbyDTO hobbyResponse = response.jsonPath().getList("hobbies", HobbyDTO.class).get(1);
+//        Assertions.assertEquals(200, response.getStatusCode());
+//        Assertions.assertEquals(2, response.jsonPath().getList("hobbies").size());
+//        Assertions.assertEquals("Killing", hobbyResponse.getName());
+//        Assertions.assertEquals("Ice giants", hobbyResponse.getDescription());
+//    }
+//
+////    TODO: no worky, gives statusCode 400
+////    @Test
+//    public void testRemoveHobby() {
+//        HobbyDTO hobbyDTO = new HobbyDTO(new Hobby("Badre", "Badre skurke"));
+//        Response response = given()
+//                .contentType("application/json")
+//                .and()
+//                .body(GSON.toJson(hobbyDTO))
+//                .when()
+//                .delete("person/removeHobby/1")
+//                .then()
+//                .extract().response();
+//        System.out.println(GSON.toJson(hobbyDTO));
+//        Assertions.assertEquals(200, response.getStatusCode());
+//        response.jsonPath().prettyPeek();
+//        Assertions.assertEquals(true, response.jsonPath().getList("hobbies").isEmpty());
+//    }
+//
+//    @Test
+//    public void testAddPhone() {
+//        PhoneDTO phoneDTO = new PhoneDTO(new Phone("75648326", "Hulks phone number"));
+//        Response response = given()
+//                .contentType("application/json")
+//                .and()
+//                .body(GSON.toJson(phoneDTO))
+//                .when()
+//                .put("person/addPhone/1")
+//                .then()
+//                .extract().response();
+//        PhoneDTO phoneResponse = response.jsonPath().getList("phones", PhoneDTO.class).get(1);
+//        Assertions.assertEquals(200, response.getStatusCode());
+//        Assertions.assertEquals(2, response.jsonPath().getList("phones").size());
+//        Assertions.assertEquals("75648326", phoneResponse.getNumber());
+//        Assertions.assertEquals("Hulks phone number", phoneResponse.getDescription());
+//    }
+//
+////    TODO: no worky, gives statusCode 400
+////    @Test
+//    public void testRemovePhone() {
+//        PhoneDTO phoneDTO = new PhoneDTO(new Phone("20212021", "This year"));
+//        Response response = given()
+//                .contentType("application/json")
+//                .and()
+//                .body(GSON.toJson(phoneDTO))
+//                .when()
+//                .delete("person/removePhone/1")
+//                .then()
+//                .extract().response();
+//        System.out.println(GSON.toJson(phoneDTO));
+//        Assertions.assertEquals(200, response.getStatusCode());
+//        Assertions.assertEquals(true, response.jsonPath().getList("phones").isEmpty());
+//    }
+//
+//    @Test
+//    public void testDeletePerson() {
+//        Response response = given()
+//                .contentType("application/json")
+//                .when()
+//                .delete("/person/removePerson/1")
+//                .then()
+//                .extract().response();
+//
+//        Assertions.assertEquals(200, response.getStatusCode());
+//    }
 }

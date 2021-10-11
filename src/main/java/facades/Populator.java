@@ -26,9 +26,11 @@ public class Populator {
         try {
             em.getTransaction().begin();
 
-            Person person = new Person("test@test.com", "Anders", "Larsen");
+            Person person = new Person("Anders@Larsen.com", "Anders", "Larsen");
             person.addHobby(new Hobby("Bage", "Alle bollerne"));
+            person.addHobby(new Hobby("Fiske", "Alle fiskene"));
             person.addPhone(new Phone("23756493", "Home phone"));
+            person.addPhone(new Phone("68364523", "Private phone"));
             Address address = new Address("Flemmingvej 34 1. tv", "Bank på tre gange");
             em.persist(address);
             CityInfo cityInfo = new CityInfo(1200, "København");
@@ -59,7 +61,7 @@ public class Populator {
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             populate();
         }
     }

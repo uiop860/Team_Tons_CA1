@@ -27,6 +27,13 @@ public class AddressDTO {
             this.cityInfo = new CityInfoDTO(address.getCityInfo());
         }
     }
+//    public AddressDTO(Address address) {
+//        this.street = address.getStreet();
+//        this.additionalInfo = address.getAdditionalInfo();
+//        if (address.getCityInfo() != null) {
+//            this.cityInfo = new CityInfoDTO(address.getCityInfo());
+//        }
+//    }
 
     public String getStreet() {
         return street;

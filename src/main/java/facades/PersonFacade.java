@@ -138,30 +138,36 @@ public class PersonFacade {
 
     public PersonDTO insertPerson(PersonDTO personDTO) {
         EntityManager em = emf.createEntityManager();
+//        System.out.println(personDTO.toString());
         Person personToInsert = null;
         boolean addresUpdated = false;
         try {
             em.getTransaction().begin();
+            
+
             Address address = null;
             if (personDTO.getAddress() != null) {
                 address = new Address(personDTO.getAddress().getStreet(), personDTO.getAddress().getAdditionalInfo());
                 addresUpdated = true;
+                em.persist(address);
                 if (personDTO.getAddress().getCityInfo() != null) {
-                    address.setCityInfo(new CityInfo(personDTO.getAddress().getCityInfo().getZipCode(), personDTO.getAddress().getCityInfo().getCity()));
+                    CityInfo cityInfo = new CityInfo(personDTO.getAddress().getCityInfo().getZipCode(), personDTO.getAddress().getCityInfo().getCity());
+                    em.persist(cityInfo);
+                    address.setCityInfo(cityInfo);
                     em.merge(address);
                 }
-                if (personDTO.getAddress().getCityInfo() == null) {
-                    em.merge(address);
-                }
+//                if (personDTO.getAddress().getCityInfo() == null) {
+//                    em.merge(address);
+//                }
             }
-            if (personDTO.getEmail() != null && personDTO.getFirstName() != null && personDTO.getLastName() != null) {
+            if (!personDTO.getEmail().equals("") && !personDTO.getFirstName().equals("") && !personDTO.getLastName().equals("")) {
                 personToInsert = new Person(personDTO.getEmail(), personDTO.getFirstName(), personDTO.getLastName());
-                if (personDTO.getHobbies() != null) {
+                if (personDTO.getHobbies() != null && personDTO.getHobbies().isEmpty()) {
                     for (HobbyDTO h : personDTO.getHobbies()) {
                         personToInsert.addHobby(new Hobby(h.getName(), h.getDescription()));
                     }
                 }
-                if (personDTO.getPhones() != null) {
+                if (personDTO.getPhones() != null && personDTO.getPhones().isEmpty()) {
                     for (PhoneDTO h : personDTO.getPhones()) {
                         personToInsert.addPhone(new Phone(h.getNumber(), h.getDescription()));
                     }
@@ -170,7 +176,9 @@ public class PersonFacade {
             if (addresUpdated && address != null) {
                 personToInsert.setAddress(address);
             }
-            em.merge(personToInsert);
+//            em.merge(personToInsert);
+            em.persist(personToInsert);
+
             em.getTransaction().commit();
         } finally {
             em.close();

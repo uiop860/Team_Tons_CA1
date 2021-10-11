@@ -7,6 +7,7 @@ package dtos;
 
 import entities.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,9 +48,12 @@ public class PersonDTO {
 
     public static List<PersonDTO> getDTO(List<Person> persons) {
         if (persons != null) {
-            List<PersonDTO> personDTO = new ArrayList<>();
-            persons.forEach(p -> personDTO.add(new PersonDTO(p)));
-            return personDTO;
+            List<PersonDTO> personsDTO = new ArrayList<>();
+            persons.forEach(p -> personsDTO.add(new PersonDTO(p)));
+            
+            List<PersonDTO> personDTOSortet = PersonDTOSorter.personDTOSort(personsDTO);
+            
+            return personDTOSortet;
         } else {
             return null;
         }
@@ -109,5 +113,10 @@ public class PersonDTO {
 
     public void removePhone(PhoneDTO phoneDTO) {
         this.phones.remove(phoneDTO);
+    }
+
+    @Override
+    public String toString() {
+        return "PersonDTO{" + "firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", id=" + id + ", address=" + address.getCityInfo().getCity() +'}';
     }
 }
